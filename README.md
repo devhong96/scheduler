@@ -1,14 +1,8 @@
 # Scheduler
 
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FSeho0218%2Fscheduler&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
-
 # 프로젝트 개요
 
 학생들의 수강 신청을 위한 플랫폼.
-
-Link : http://seho0218.synology.me:3205/
-
-로그인 링크 : http://seho0218.synology.me:3205/login
 
 ## 기본정보
 
