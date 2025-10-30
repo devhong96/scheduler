@@ -15,7 +15,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://seho0218.synology.me:3306/scheduler_portfolio?characterEncoding=utf-8
     username: root
-    password: scheduler
+    password: 
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
