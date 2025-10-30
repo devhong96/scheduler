@@ -1,34 +1,38 @@
-#portfolio
-#3205
+#test
+#8080
 
 server:
-  port: 3205
+  port: 8080
 
 spring:
   sql:
     init:
       mode: always
+  security:
+    user:
+      name: user
+      password: 123
   messages:
     basename: errors
 
   datasource: # jdbc
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://seho0218.synology.me:3306/scheduler_portfolio?characterEncoding=utf-8
-    username: root
-    password: Root123!@#
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/test
+    username: sa
+    password:
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
-    database: mysql
+    database-platform: org.hibernate.dialect.H2Dialect
+    database: h2
     open-in-view: false
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
         show_sql: true
-      hibernate.highlight_sql: true
-      defer-datasource-initialization: true
+        highlight_sql: true
 
   thymeleaf:
     cache: true #운영시 true
@@ -43,11 +47,21 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: dev.hsayho@gmail.com
-    password: #appPassword
+    password:
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-        protocol: smtp
+      protocol: smtp
+
+#logging:
+#  file:
+#    path: D:/logs
+#  level:
+#    root: info
+#  logback:
+#    rolling policy:
+#      max-history: 10
+#      max-file-size: 500MB

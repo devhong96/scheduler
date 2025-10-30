@@ -18,14 +18,13 @@ import static com.attendance.scheduler.course.domain.QClassEntity.classEntity;
 import static com.attendance.scheduler.student.domain.QStudentEntity.studentEntity;
 import static com.attendance.scheduler.teacher.domain.QTeacherEntity.teacherEntity;
 
-
 @Repository
 @RequiredArgsConstructor
 public class ClassRepository {
 
     public final JPAQueryFactory queryFactory;
 
-    @Lock(LockModeType.OPTIMISTIC)
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     public List<ClassDTO> getStudentClassList(){
         return queryFactory
                 .select(Projections.fields(ClassDTO.class,
