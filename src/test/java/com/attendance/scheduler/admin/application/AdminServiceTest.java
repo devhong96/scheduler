@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @Transactional
-class AdminServiceImplTest {
+class AdminServiceTest {
 
     @Autowired private AdminService adminService;
     @Autowired private AdminJpaRepository adminJpaRepository;

@@ -1,9 +1,23 @@
 package com.attendance.scheduler.student.application;
 
 import com.attendance.scheduler.comment.dto.CommentDTO;
+import com.attendance.scheduler.student.repository.StudentJpaRepository;
+import com.attendance.scheduler.student.repository.StudentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-public interface StudentService {
+@Service
+@RequiredArgsConstructor
+public class StudentService {
 
-    boolean existStudentEntityByStudentName(String studentName);
-    boolean existStudentEntityByStudentNameAndStudentParentPhoneNumber(CommentDTO commentDTO);
+    private final StudentJpaRepository studentJpaRepository;
+    private final StudentRepository studentRepository;
+
+    public boolean existStudentEntityByStudentName(String studentName) {
+        return studentJpaRepository.existsByStudentNameIs(studentName);
+    }
+
+    public boolean existStudentEntityByStudentNameAndStudentParentPhoneNumber(CommentDTO commentDTO) {
+        return studentRepository.existStudentEntityByStudentNameAndStudentParentPhoneNumber(commentDTO);
+    }
 }

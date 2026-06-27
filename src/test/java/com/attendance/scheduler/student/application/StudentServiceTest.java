@@ -16,7 +16,7 @@ import static com.attendance.scheduler.testDataSet.TestDataSet.testTeacherDataSe
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-class StudentServiceImplTest {
+class StudentServiceTest {
 
     @Autowired private StudentJpaRepository studentJpaRepository;
     @Autowired private TeacherService teacherService;

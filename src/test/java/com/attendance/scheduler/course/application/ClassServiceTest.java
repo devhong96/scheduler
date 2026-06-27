@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class ClassServiceImplTest {
+class ClassServiceTest {
 
     @Autowired private ClassService classService;
     @Autowired private TeacherService teacherService;

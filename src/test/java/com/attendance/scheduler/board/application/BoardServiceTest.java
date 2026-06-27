@@ -15,7 +15,7 @@ import java.util.List;
 
 @SpringBootTest
 @Transactional
-class BoardServiceImplTest {
+class BoardServiceTest {
 
     @Autowired private BoardJpaRepository boardJpaRepository;
     @Autowired private AdminJpaRepository adminJpaRepository;
