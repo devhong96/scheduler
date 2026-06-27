@@ -1,8 +1,8 @@
 package com.attendance.scheduler.board.application;
 
-import com.attendance.scheduler.admin.domain.AdminEntity;
+import com.attendance.scheduler.admin.domain.Admin;
 import com.attendance.scheduler.admin.repository.AdminJpaRepository;
-import com.attendance.scheduler.board.domain.BoardEntity;
+import com.attendance.scheduler.board.domain.Board;
 import com.attendance.scheduler.board.dto.BoardDTO;
 import com.attendance.scheduler.board.repository.BoardJpaRepository;
 import jakarta.transaction.Transactional;
@@ -31,8 +31,8 @@ class BoardServiceTest {
             boardDTO.setTitle(String.valueOf(i));
             boardDTO.setContent("123");
             boardDTO.setName("관리자");
-            AdminEntity admin = adminJpaRepository.findByUsernameIs("admin");
-            BoardEntity entity = boardDTO.toEntity();
+            Admin admin = adminJpaRepository.findByUsernameIs("admin");
+            Board entity = boardDTO.toEntity();
             entity.setAdminEntity(admin);
             boardJpaRepository.save(entity);
 
@@ -49,14 +49,14 @@ class BoardServiceTest {
             boardDTO.setTitle(String.valueOf(i));
             boardDTO.setContent("123");
             boardDTO.setName("관리자");
-            AdminEntity admin = adminJpaRepository.findByUsernameIs("admin");
-            BoardEntity entity = boardDTO.toEntity();
+            Admin admin = adminJpaRepository.findByUsernameIs("admin");
+            Board entity = boardDTO.toEntity();
             entity.setAdminEntity(admin);
             boardJpaRepository.save(entity);
         }
         //then
 
-        List<BoardEntity> all = boardJpaRepository.findAll();
+        List<Board> all = boardJpaRepository.findAll();
         long count = all.size();
         Assertions.assertEquals(1, count);
 

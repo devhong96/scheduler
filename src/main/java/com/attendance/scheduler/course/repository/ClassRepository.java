@@ -1,9 +1,9 @@
 package com.attendance.scheduler.course.repository;
 
-import com.attendance.scheduler.course.domain.ClassEntity;
+import com.attendance.scheduler.course.domain.Course;
 import com.attendance.scheduler.course.dto.ClassDTO;
 import com.attendance.scheduler.course.dto.StudentClassDTO;
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.LockModeType;
@@ -14,9 +14,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.attendance.scheduler.course.domain.QClassEntity.classEntity;
-import static com.attendance.scheduler.student.domain.QStudentEntity.studentEntity;
-import static com.attendance.scheduler.teacher.domain.QTeacherEntity.teacherEntity;
+import static com.attendance.scheduler.course.domain.QCourse.course;
+import static com.attendance.scheduler.student.domain.QStudent.student;
+import static com.attendance.scheduler.teacher.domain.QTeacher.teacher;
 
 @Repository
 @RequiredArgsConstructor
@@ -28,55 +28,55 @@ public class ClassRepository {
     public List<ClassDTO> getStudentClassList(){
         return queryFactory
                 .select(Projections.fields(ClassDTO.class,
-                        studentEntity.studentName,
-                        classEntity.monday,
-                        classEntity.tuesday,
-                        classEntity.wednesday,
-                        classEntity.thursday,
-                        classEntity.friday,
-                        teacherEntity.teacherName,
-                        classEntity.updateTimeStamp))
-                .from(classEntity)
-                .join(teacherEntity)
-                .on(classEntity.teacherEntity.eq(teacherEntity))
-                .join(studentEntity)
-                .on(classEntity.studentEntity.eq(studentEntity))
+                        student.studentName,
+                        course.monday,
+                        course.tuesday,
+                        course.wednesday,
+                        course.thursday,
+                        course.friday,
+                        teacher.teacherName,
+                        course.updateTimeStamp))
+                .from(course)
+                .join(teacher)
+                .on(course.teacherEntity.eq(teacher))
+                .join(student)
+                .on(course.studentEntity.eq(student))
                 .fetch();
     }
 
     public StudentClassDTO getStudentClassByStudentName(String studentName){
         return queryFactory
                 .select(Projections.fields(StudentClassDTO.class,
-                        studentEntity.studentName,
-                        classEntity.monday,
-                        classEntity.tuesday,
-                        classEntity.wednesday,
-                        classEntity.thursday,
-                        classEntity.friday))
-                .from(classEntity)
-                .where(studentEntity.studentName.eq(studentName))
+                        student.studentName,
+                        course.monday,
+                        course.tuesday,
+                        course.wednesday,
+                        course.thursday,
+                        course.friday))
+                .from(course)
+                .where(student.studentName.eq(studentName))
                 .fetchOne();
     }
 
-    public List<StudentClassDTO> getStudentClassByTeacherEntity(TeacherEntity teacherEntity){
+    public List<StudentClassDTO> getStudentClassByTeacherEntity(Teacher teacher){
         return queryFactory
                 .select(Projections.fields(StudentClassDTO.class,
-                        classEntity.monday,
-                        classEntity.tuesday,
-                        classEntity.wednesday,
-                        classEntity.thursday,
-                        classEntity.friday,
-                        classEntity.teacherEntity))
-                .from(classEntity)
-                .where(classEntity.teacherEntity.eq(teacherEntity))
+                        course.monday,
+                        course.tuesday,
+                        course.wednesday,
+                        course.thursday,
+                        course.friday,
+                        course.teacherEntity))
+                .from(course)
+                .where(course.teacherEntity.eq(teacher))
                 .fetch();
     }
 
-    public Optional<ClassEntity> getStudentClassEntityByStudentName(String studentName) {
+    public Optional<Course> getStudentClassEntityByStudentName(String studentName) {
         return Optional.ofNullable(queryFactory
-                .selectFrom(classEntity)
-                .join(studentEntity)
-                .on(classEntity.studentEntity.studentName.eq(studentName))
+                .selectFrom(course)
+                .join(student)
+                .on(course.studentEntity.studentName.eq(studentName))
                 .fetchOne());
     }
 }

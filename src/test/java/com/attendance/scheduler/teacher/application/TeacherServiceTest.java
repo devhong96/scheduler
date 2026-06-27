@@ -1,7 +1,7 @@
 package com.attendance.scheduler.teacher.application;
 
 import com.attendance.scheduler.common.dto.LoginDTO;
-import com.attendance.scheduler.student.domain.StudentEntity;
+import com.attendance.scheduler.student.domain.Student;
 import com.attendance.scheduler.student.repository.StudentJpaRepository;
 import com.attendance.scheduler.teacher.repository.TeacherJpaRepository;
 import jakarta.persistence.EntityManager;
@@ -73,7 +73,7 @@ class TeacherServiceTest {
                 new UsernamePasswordAuthenticationToken(testTeacherDataSet().getUsername(), null , userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        StudentEntity studentEntityByStudentNameIs = studentJpaRepository
+        Student studentEntityByStudentNameIs = studentJpaRepository
                 .findStudentEntityByStudentName(testStudentInformationDTO().getStudentName());
 
         //When

@@ -1,6 +1,6 @@
 package com.attendance.scheduler.notification.domain;
 
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -20,7 +20,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @Table(name = "notice")
 @NoArgsConstructor(access = PROTECTED)
-public class NotificationEntity {
+public class Notification {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -34,9 +34,9 @@ public class NotificationEntity {
     @Nullable
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")
-    private TeacherEntity teacherEntity;
+    private Teacher teacherEntity;
 
-    public void setTeacherEntity(TeacherEntity teacherEntity) {
+    public void setTeacherEntity(Teacher teacherEntity) {
         if (this.teacherEntity != null) {
             this.teacherEntity.getNotificationEntityList().remove(this);
         }
@@ -53,7 +53,7 @@ public class NotificationEntity {
     }
 
     @Builder
-    public NotificationEntity(TeacherEntity teacherEntity, String message, boolean checked, LocalDateTime createdTime) {
+    public Notification(Teacher teacherEntity, String message, boolean checked, LocalDateTime createdTime) {
         this.teacherEntity = teacherEntity;
         this.message = message;
         this.checked = checked;

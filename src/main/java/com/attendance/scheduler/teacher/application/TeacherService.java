@@ -1,7 +1,7 @@
 package com.attendance.scheduler.teacher.application;
 
 import com.attendance.scheduler.course.repository.ClassJpaRepository;
-import com.attendance.scheduler.student.domain.StudentEntity;
+import com.attendance.scheduler.student.domain.Student;
 import com.attendance.scheduler.student.dto.StudentInformationDTO;
 import com.attendance.scheduler.student.repository.StudentJpaRepository;
 import com.attendance.scheduler.student.repository.StudentRepository;
@@ -47,14 +47,14 @@ public class TeacherService {
 
     @Transactional
     public void registerStudentInformation(RegisterStudentDTO registerStudentDTO) {
-        StudentEntity studentEntity = registerStudentDTO.toEntity();
+        Student studentEntity = registerStudentDTO.toEntity();
         studentEntity.setTeacherEntity(teacherJpaRepository.findByUsernameIs(registerStudentDTO.getTeacherUsername()));
         studentJpaRepository.save(studentEntity);
     }
 
     @Transactional
     public void deleteStudentInformation(StudentInformationDTO studentInformationDTO) {
-        Optional<StudentEntity> studentEntityById = Optional.ofNullable(studentJpaRepository.findStudentEntityById(studentInformationDTO.getId()));
+        Optional<Student> studentEntityById = Optional.ofNullable(studentJpaRepository.findStudentEntityById(studentInformationDTO.getId()));
         //cascade
         studentEntityById.ifPresent(studentEntity -> classJpaRepository.deleteById(studentEntity.getId()));
         studentJpaRepository.deleteStudentEntityById(studentInformationDTO.getId());

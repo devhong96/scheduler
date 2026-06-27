@@ -1,7 +1,7 @@
 package com.attendance.scheduler.board.domain;
 
-import com.attendance.scheduler.admin.domain.AdminEntity;
-import com.attendance.scheduler.comment.domain.entity.CommentEntity;
+import com.attendance.scheduler.admin.domain.Admin;
+import com.attendance.scheduler.comment.domain.entity.Comment;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +23,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 @DynamicInsert
 @NoArgsConstructor(access = PROTECTED)
-public class BoardEntity {
+public class Board {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -43,9 +43,9 @@ public class BoardEntity {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private AdminEntity adminEntity;
+    private Admin adminEntity;
 
-    public void setAdminEntity(AdminEntity adminEntity) {
+    public void setAdminEntity(Admin adminEntity) {
         if (this.adminEntity != null) {
             this.adminEntity.getBoardEntityList().remove(this);
         }
@@ -56,9 +56,9 @@ public class BoardEntity {
     }
 
     @OneToMany(mappedBy = "boardEntity")
-    List<CommentEntity> commentEntityList = new ArrayList<>();
+    List<Comment> commentEntityList = new ArrayList<>();
 
-    public void setCommentEntity(CommentEntity commentEntity) {
+    public void setCommentEntity(Comment commentEntity) {
         this.commentEntityList.add(commentEntity);
     }
     public void updateTitle(String title) {
@@ -71,7 +71,7 @@ public class BoardEntity {
 
 
     @Builder
-    public BoardEntity(String title, String content, Integer views, Timestamp creationTimestamp, Timestamp modifiedDate) {
+    public Board(String title, String content, Integer views, Timestamp creationTimestamp, Timestamp modifiedDate) {
         this.title = title;
         this.content = content;
         this.views = views;

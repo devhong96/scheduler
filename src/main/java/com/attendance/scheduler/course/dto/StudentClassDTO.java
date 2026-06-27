@@ -1,6 +1,6 @@
 package com.attendance.scheduler.course.dto;
 
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,5 +29,5 @@ public class StudentClassDTO {
 
     private String teacherName;
 
-    private TeacherEntity teacherEntity;
+    private Teacher teacherEntity;
 }

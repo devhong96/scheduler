@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.attendance.scheduler.admin.domain.QAdminEntity.adminEntity;
-import static com.attendance.scheduler.board.domain.QBoardEntity.boardEntity;
+import static com.attendance.scheduler.admin.domain.QAdmin.admin;
+import static com.attendance.scheduler.board.domain.QBoard.board;
 import static org.springframework.util.StringUtils.hasText;
 
 @Repository
@@ -28,28 +28,28 @@ public class BoardRepository {
     public Page<BoardDTO> pageNoticeList(Condition condition, Pageable pageable){
         List<BoardDTO> content = queryFactory
                 .select(Projections.fields(BoardDTO.class,
-                        boardEntity.id,
-                        boardEntity.title,
-                        boardEntity.content,
-                        adminEntity.name,
-                        boardEntity.views,
-                        boardEntity.creationTimestamp,
-                        boardEntity.modifiedDate))
-                .from(boardEntity)
-                .join(adminEntity)
-                .on(boardEntity.adminEntity.id.eq(adminEntity.id))
+                        board.id,
+                        board.title,
+                        board.content,
+                        admin.name,
+                        board.views,
+                        board.creationTimestamp,
+                        board.modifiedDate))
+                .from(board)
+                .join(admin)
+                .on(board.adminEntity.id.eq(admin.id))
                 .where(
                         titleEq(condition.getTitleContent()),
                         contentEq(condition.getTitleContent())
                 )
-                .orderBy(boardEntity.id.desc())
+                .orderBy(board.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
         JPAQuery<Long> counts = queryFactory
-                .select(boardEntity.count())
-                .from(boardEntity)
+                .select(board.count())
+                .from(board)
                 .where(
                         titleEq(condition.getTitleContent()),
                         contentEq(condition.getTitleContent())
@@ -59,11 +59,11 @@ public class BoardRepository {
     }
 
     private BooleanExpression titleEq(String title){
-        return hasText(title) ? boardEntity.title.eq(title) : null;
+        return hasText(title) ? board.title.eq(title) : null;
     }
 
     private BooleanExpression contentEq(String content){
-        return hasText(content) ? boardEntity.content.eq(content) : null;
+        return hasText(content) ? board.content.eq(content) : null;
     }
 
 
@@ -73,40 +73,40 @@ public class BoardRepository {
     public BoardDTO findNoticeById(Long id) {
 
         queryFactory
-                .update(boardEntity)
-                .set(boardEntity.views, boardEntity.views.add(1))
-                .where(boardEntity.id.eq(id))
+                .update(board)
+                .set(board.views, board.views.add(1))
+                .where(board.id.eq(id))
                 .execute();
 
         return queryFactory
                 .select(Projections.fields(BoardDTO.class,
-                        boardEntity.id,
-                        boardEntity.title,
-                        boardEntity.content,
-                        adminEntity.name,
-                        boardEntity.views,
-                        boardEntity.creationTimestamp))
-                .from(boardEntity)
-                .join(adminEntity)
-                .on(boardEntity.adminEntity.id.eq(adminEntity.id))
-                .where(boardEntity.id.eq(id))
+                        board.id,
+                        board.title,
+                        board.content,
+                        admin.name,
+                        board.views,
+                        board.creationTimestamp))
+                .from(board)
+                .join(admin)
+                .on(board.adminEntity.id.eq(admin.id))
+                .where(board.id.eq(id))
                 .fetchOne();
     }
 
     public BoardDTO editNoticeForm(Long id){
         return queryFactory
                 .select(Projections.fields(BoardDTO.class,
-                        boardEntity.id,
-                        boardEntity.title,
-                        boardEntity.content,
-                        adminEntity.name,
-                        boardEntity.views,
-                        boardEntity.creationTimestamp,
-                        boardEntity.modifiedDate))
-                .from(boardEntity)
-                .join(adminEntity)
-                .on(boardEntity.adminEntity.id.eq(adminEntity.id))
-                .where(boardEntity.id.eq(id))
+                        board.id,
+                        board.title,
+                        board.content,
+                        admin.name,
+                        board.views,
+                        board.creationTimestamp,
+                        board.modifiedDate))
+                .from(board)
+                .join(admin)
+                .on(board.adminEntity.id.eq(admin.id))
+                .where(board.id.eq(id))
                 .fetchOne();
 
     }

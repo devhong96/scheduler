@@ -1,11 +1,11 @@
 package com.attendance.scheduler.course.application;
 
-import com.attendance.scheduler.course.domain.ClassEntity;
+import com.attendance.scheduler.course.domain.Course;
 import com.attendance.scheduler.course.dto.ClassDTO;
 import com.attendance.scheduler.course.dto.StudentClassDTO;
 import com.attendance.scheduler.course.repository.ClassJpaRepository;
 import com.attendance.scheduler.course.repository.ClassRepository;
-import com.attendance.scheduler.student.domain.StudentEntity;
+import com.attendance.scheduler.student.domain.Student;
 import com.attendance.scheduler.student.dto.ClassListDTO;
 import com.attendance.scheduler.student.repository.StudentJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class ClassService {
     public ClassListDTO findTeachersClasses(String studentName) {
 
         //학생 이름으로
-        StudentEntity studentEntity
+        Student studentEntity
                 = studentJpaRepository.findStudentEntityByStudentName(studentName);
 
         List<StudentClassDTO> studentClassByTeacherName
@@ -64,9 +64,9 @@ public class ClassService {
 
         classValidator(classDTO);
 
-        StudentEntity studentEntity = studentJpaRepository.findStudentEntityByStudentName(classDTO.getStudentName());
+        Student studentEntity = studentJpaRepository.findStudentEntityByStudentName(classDTO.getStudentName());
 
-        ClassEntity classEntity = classDTO.toEntity();
+        Course classEntity = classDTO.toEntity();
         classEntity.setTeacherEntity(studentEntity.getTeacherEntity());
         classEntity.setStudentEntity(studentEntity);
         classJpaRepository.save(classEntity);
@@ -75,7 +75,7 @@ public class ClassService {
     }
 
     private void classValidator(ClassDTO classDTO) {
-        Optional<StudentEntity> studentEntityByStudentName = Optional.ofNullable(studentJpaRepository.findStudentEntityByStudentName(classDTO.getStudentName()));
+        Optional<Student> studentEntityByStudentName = Optional.ofNullable(studentJpaRepository.findStudentEntityByStudentName(classDTO.getStudentName()));
 
         if (studentEntityByStudentName.isEmpty()) {
             duplicateClassValidator(classDTO);
@@ -106,7 +106,7 @@ public class ClassService {
 
     @Transactional
     public void deleteClass(String studentName) {
-        StudentEntity studentEntity = studentJpaRepository.findStudentEntityByStudentName(studentName);
+        Student studentEntity = studentJpaRepository.findStudentEntityByStudentName(studentName);
         classJpaRepository.deleteClassEntityByStudentEntity(studentEntity);
     }
 }

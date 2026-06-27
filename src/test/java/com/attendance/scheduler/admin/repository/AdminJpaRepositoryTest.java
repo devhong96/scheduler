@@ -1,6 +1,6 @@
 package com.attendance.scheduler.admin.repository;
 
-import com.attendance.scheduler.admin.domain.AdminEntity;
+import com.attendance.scheduler.admin.domain.Admin;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -20,7 +20,7 @@ class AdminJpaRepositoryTest {
     void findByUsernameIs() {
 
         //When
-        AdminEntity byUsernameIs = adminJpaRepository
+        Admin byUsernameIs = adminJpaRepository
                 .findByUsernameIs("admin");
 
         //Then

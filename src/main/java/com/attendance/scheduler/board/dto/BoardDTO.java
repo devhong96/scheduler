@@ -1,6 +1,6 @@
 package com.attendance.scheduler.board.dto;
 
-import com.attendance.scheduler.board.domain.BoardEntity;
+import com.attendance.scheduler.board.domain.Board;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,8 +21,8 @@ public class BoardDTO {
     private Timestamp creationTimestamp;
     private Timestamp modifiedDate;
 
-    public BoardEntity toEntity(){
-        return BoardEntity.builder()
+    public Board toEntity(){
+        return Board.builder()
                 .title(title)
                 .content(content)
                 .views(views)

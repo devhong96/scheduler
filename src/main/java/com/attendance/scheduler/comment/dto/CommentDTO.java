@@ -1,6 +1,6 @@
 package com.attendance.scheduler.comment.dto;
 
-import com.attendance.scheduler.comment.domain.entity.CommentEntity;
+import com.attendance.scheduler.comment.domain.entity.Comment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,8 +21,8 @@ public class CommentDTO {
     private String comment;
     private Timestamp creationTimeStamp;
 
-    public CommentEntity toEntity() {
-        return CommentEntity.builder()
+    public Comment toEntity() {
+        return Comment.builder()
                 .commentAuthor(commentAuthor)
                 .comment(comment)
                 .creationTimeStamp(creationTimeStamp)

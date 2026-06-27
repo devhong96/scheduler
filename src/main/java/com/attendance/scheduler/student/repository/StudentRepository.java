@@ -1,7 +1,7 @@
 package com.attendance.scheduler.student.repository;
 
 import com.attendance.scheduler.comment.dto.CommentDTO;
-import com.attendance.scheduler.student.domain.StudentEntity;
+import com.attendance.scheduler.student.domain.Student;
 import com.attendance.scheduler.student.dto.StudentInformationDTO;
 import com.attendance.scheduler.teacher.dto.StudentSearchCondition;
 import com.querydsl.core.types.Projections;
@@ -17,8 +17,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.attendance.scheduler.student.domain.QStudentEntity.studentEntity;
-import static com.attendance.scheduler.teacher.domain.QTeacherEntity.teacherEntity;
+import static com.attendance.scheduler.student.domain.QStudent.student;
+import static com.attendance.scheduler.teacher.domain.QTeacher.teacher;
 import static org.springframework.util.StringUtils.hasText;
 
 
@@ -31,17 +31,17 @@ public class StudentRepository {
     public Page<StudentInformationDTO> studentInformationDTOList(StudentSearchCondition studentSearchCondition, Pageable pageable){
         List<StudentInformationDTO> studentInformationList = queryFactory
                 .select(Projections.fields(StudentInformationDTO.class,
-                        studentEntity.id,
-                        studentEntity.studentName,
-                        studentEntity.studentAddress,
-                        studentEntity.studentDetailedAddress,
-                        studentEntity.studentPhoneNumber,
-                        studentEntity.studentParentPhoneNumber,
-                        teacherEntity.teacherName,
-                        studentEntity.creationTimestamp))
-                .from(studentEntity)
-                .join(teacherEntity)
-                .on(studentEntity.teacherEntity.eq(teacherEntity))
+                        student.id,
+                        student.studentName,
+                        student.studentAddress,
+                        student.studentDetailedAddress,
+                        student.studentPhoneNumber,
+                        student.studentParentPhoneNumber,
+                        teacher.teacherName,
+                        student.creationTimestamp))
+                .from(student)
+                .join(teacher)
+                .on(student.teacherEntity.eq(teacher))
                 .where(
                         studentNameEq(studentSearchCondition.getStudentName()),
                         teacherNameEq(studentSearchCondition.getTeacherName())
@@ -53,8 +53,8 @@ public class StudentRepository {
         System.out.println("studentInformationList = " + studentInformationList);
 
         JPAQuery<Long> counts = queryFactory
-                .select(studentEntity.count())
-                .from(studentEntity)
+                .select(student.count())
+                .from(student)
                 .where(
                         studentNameEq(studentSearchCondition.getStudentName()),
                         teacherNameEq(studentSearchCondition.getTeacherName())
@@ -64,17 +64,17 @@ public class StudentRepository {
     }
 
     private BooleanExpression studentNameEq(String studentName) {
-        return hasText(studentName) ? studentEntity.studentName.eq(studentName) : null;
+        return hasText(studentName) ? student.studentName.eq(studentName) : null;
     }
 
     private BooleanExpression teacherNameEq(String teacherName) {
-        return hasText(teacherName) ? teacherEntity.teacherName.eq(teacherName) : null;
+        return hasText(teacherName) ? teacher.teacherName.eq(teacherName) : null;
     }
 
-    public Optional<StudentEntity> getStudentEntity(Long studentId) {
+    public Optional<Student> getStudentEntity(Long studentId) {
         return Optional.ofNullable(queryFactory
-                .selectFrom(studentEntity)
-                .where(studentEntity.id.eq(studentId))
+                .selectFrom(student)
+                .where(student.id.eq(studentId))
                 .fetchOne());
     }
 
@@ -83,9 +83,9 @@ public class StudentRepository {
 
     public boolean existStudentEntityByStudentNameAndStudentParentPhoneNumber(CommentDTO commentDTO) {
         Integer fetchOne = queryFactory.selectOne()
-                .from(studentEntity)
-                .where(studentEntity.studentName.eq(commentDTO.getCommentAuthor()),
-                        studentEntity.studentParentPhoneNumber.eq(commentDTO.getPassword()))
+                .from(student)
+                .where(student.studentName.eq(commentDTO.getCommentAuthor()),
+                        student.studentParentPhoneNumber.eq(commentDTO.getPassword()))
                 .fetchOne();
         return fetchOne!=null;
     }

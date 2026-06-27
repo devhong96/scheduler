@@ -1,7 +1,7 @@
 package com.attendance.scheduler.teacher.application;
 
 import com.attendance.scheduler.infra.email.FindPasswordDTO;
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import com.attendance.scheduler.teacher.dto.EditEmailDTO;
 import com.attendance.scheduler.teacher.dto.FindIdDTO;
 import com.attendance.scheduler.teacher.dto.PwdEditDTO;
@@ -33,7 +33,7 @@ public class TeacherCertService {
     }
 
     public Optional<FindIdDTO> findIdByEmail(FindIdDTO findIdDTO) {
-        Optional<TeacherEntity> optionalTeacherEntity
+        Optional<Teacher> optionalTeacherEntity
                 = Optional.ofNullable(teacherJpaRepository.findByEmailIs(findIdDTO.getEmail()));
 
         return optionalTeacherEntity.map(teacherEntity -> {
@@ -49,14 +49,14 @@ public class TeacherCertService {
         final String encodePassword = teacherPasswordEncoder.encode(pwdEditDTO.getPassword());
         pwdEditDTO.setPassword(encodePassword);
 
-        TeacherEntity teacherEntity = teacherJpaRepository.findByUsernameIs(pwdEditDTO.getUsername());
+        Teacher teacherEntity = teacherJpaRepository.findByUsernameIs(pwdEditDTO.getUsername());
         teacherEntity.updatePassword(pwdEditDTO);
         teacherJpaRepository.save(teacherEntity);
     }
 
     @Transactional
     public void updateEmail(EditEmailDTO editEmailDTO) {
-        TeacherEntity teacherEntity = teacherJpaRepository.findByUsernameIs(editEmailDTO.getUsername());
+        Teacher teacherEntity = teacherJpaRepository.findByUsernameIs(editEmailDTO.getUsername());
         teacherEntity.updateEmail(editEmailDTO);
         teacherJpaRepository.save(teacherEntity);
     }

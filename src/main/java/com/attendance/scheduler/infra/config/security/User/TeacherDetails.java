@@ -1,6 +1,6 @@
 package com.attendance.scheduler.infra.config.security.User;
 
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,7 +12,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class TeacherDetails implements UserDetails {
 
-    private final TeacherEntity teacherEntity;
+    private final Teacher teacherEntity;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();

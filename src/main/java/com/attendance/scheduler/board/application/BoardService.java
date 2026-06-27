@@ -1,8 +1,8 @@
 package com.attendance.scheduler.board.application;
 
-import com.attendance.scheduler.admin.domain.AdminEntity;
+import com.attendance.scheduler.admin.domain.Admin;
 import com.attendance.scheduler.admin.repository.AdminJpaRepository;
-import com.attendance.scheduler.board.domain.BoardEntity;
+import com.attendance.scheduler.board.domain.Board;
 import com.attendance.scheduler.board.dto.BoardDTO;
 import com.attendance.scheduler.board.dto.Condition;
 import com.attendance.scheduler.board.repository.BoardJpaRepository;
@@ -27,8 +27,8 @@ public class BoardService {
 
     @Transactional
     public void writeNotice(BoardDTO boardDTO) {
-        AdminEntity admin = adminJpaRepository.findByUsernameIs(boardDTO.getName());
-        BoardEntity entity = boardDTO.toEntity();
+        Admin admin = adminJpaRepository.findByUsernameIs(boardDTO.getName());
+        Board entity = boardDTO.toEntity();
         entity.setAdminEntity(admin);
         boardJpaRepository.save(entity);
     }
@@ -44,7 +44,7 @@ public class BoardService {
 
     @Transactional
     public void editNotice(BoardDTO boardDTO) {
-        BoardEntity boardEntityById = boardJpaRepository.findBoardEntityById(boardDTO.getId());
+        Board boardEntityById = boardJpaRepository.findBoardEntityById(boardDTO.getId());
         boardEntityById.updateTitle(boardDTO.getTitle());
         boardEntityById.updateContent(boardDTO.getContent());
         boardJpaRepository.save(boardEntityById);

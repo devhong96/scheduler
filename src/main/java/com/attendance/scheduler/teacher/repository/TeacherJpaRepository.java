@@ -1,21 +1,21 @@
 package com.attendance.scheduler.teacher.repository;
 
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TeacherJpaRepository extends JpaRepository<TeacherEntity, Long> {
+public interface TeacherJpaRepository extends JpaRepository<Teacher, Long> {
 
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
 
-    TeacherEntity findByUsernameIs(String username);
+    Teacher findByUsernameIs(String username);
 
-    TeacherEntity findTeacherEntityById(Long id);
+    Teacher findTeacherEntityById(Long id);
 
-    TeacherEntity findByEmailIs(String email);
+    Teacher findByEmailIs(String email);
 
     @Transactional
     void deleteByUsernameIs(String username);

@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.attendance.scheduler.student.domain.QStudentEntity.studentEntity;
-import static com.attendance.scheduler.teacher.domain.QTeacherEntity.teacherEntity;
+import static com.attendance.scheduler.student.domain.QStudent.student;
+import static com.attendance.scheduler.teacher.domain.QTeacher.teacher;
 
 @SpringBootTest
 class StudentRepositoryTest {
@@ -24,17 +24,17 @@ class StudentRepositoryTest {
 
         List<StudentInformationDTO> studentInformationList = queryFactory
                 .select(Projections.fields(StudentInformationDTO.class,
-                        studentEntity.id,
-                        studentEntity.studentName,
-                        studentEntity.studentAddress,
-                        studentEntity.studentDetailedAddress,
-                        studentEntity.studentPhoneNumber,
-                        studentEntity.studentParentPhoneNumber,
-                        teacherEntity.teacherName,
-                        studentEntity.creationTimestamp))
-                .from(studentEntity)
-                .join(teacherEntity)
-                .on(studentEntity.teacherEntity.eq(teacherEntity))
+                        student.id,
+                        student.studentName,
+                        student.studentAddress,
+                        student.studentDetailedAddress,
+                        student.studentPhoneNumber,
+                        student.studentParentPhoneNumber,
+                        teacher.teacherName,
+                        student.creationTimestamp))
+                .from(student)
+                .join(teacher)
+                .on(student.teacherEntity.eq(teacher))
                 .fetch();
 
         System.out.println("studentInformationList = " + studentInformationList);
@@ -44,9 +44,9 @@ class StudentRepositoryTest {
     @Transactional
     void existStudentEntityByStudentNameAndStudentParentPhoneNumber() {
         Integer fetchOne = queryFactory.selectOne()
-                .from(studentEntity)
-                .where(studentEntity.studentName.eq("김샘플0"),
-                        studentEntity.studentParentPhoneNumber.eq("010-1234-1234"))
+                .from(student)
+                .where(student.studentName.eq("김샘플0"),
+                        student.studentParentPhoneNumber.eq("010-1234-1234"))
                 .fetchOne();
 
     }

@@ -9,9 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static com.attendance.scheduler.course.domain.QClassEntity.classEntity;
-import static com.attendance.scheduler.student.domain.QStudentEntity.studentEntity;
-import static com.attendance.scheduler.teacher.domain.QTeacherEntity.teacherEntity;
+import static com.attendance.scheduler.course.domain.QCourse.course;
+import static com.attendance.scheduler.student.domain.QStudent.student;
+import static com.attendance.scheduler.teacher.domain.QTeacher.teacher;
 
 @SpringBootTest
 class ClassRepositoryTest {
@@ -23,19 +23,19 @@ class ClassRepositoryTest {
     public void getStudentClassList(){
         List<ClassDTO> fetch = queryFactory
                 .select(Projections.fields(ClassDTO.class,
-                        studentEntity.studentName,
-                        classEntity.monday,
-                        classEntity.tuesday,
-                        classEntity.wednesday,
-                        classEntity.thursday,
-                        classEntity.friday,
-                        teacherEntity.teacherName,
-                        classEntity.updateTimeStamp))
-                .from(classEntity)
-                .join(teacherEntity)
-                .on(classEntity.teacherEntity.eq(teacherEntity))
-                .join(classEntity)
-                .on(classEntity.studentEntity.eq(studentEntity))
+                        student.studentName,
+                        course.monday,
+                        course.tuesday,
+                        course.wednesday,
+                        course.thursday,
+                        course.friday,
+                        teacher.teacherName,
+                        course.updateTimeStamp))
+                .from(course)
+                .join(teacher)
+                .on(course.teacherEntity.eq(teacher))
+                .join(course)
+                .on(course.studentEntity.eq(student))
                 .fetch();
         System.out.println("fetch = " + fetch);
     }

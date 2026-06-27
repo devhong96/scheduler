@@ -1,6 +1,6 @@
 package com.attendance.scheduler.admin.application;
 
-import com.attendance.scheduler.admin.domain.AdminEntity;
+import com.attendance.scheduler.admin.domain.Admin;
 import com.attendance.scheduler.admin.dto.EditEmailDTO;
 import com.attendance.scheduler.admin.repository.AdminJpaRepository;
 import com.attendance.scheduler.infra.email.FindPasswordDTO;
@@ -25,7 +25,7 @@ public class AdminCertService{
     @Transactional
     public void initializePassword(PwdEditDTO pwdEditDTO) {
         final String encodePassword = passwordEncoder.encode(pwdEditDTO.getPassword());
-        AdminEntity adminEntity = adminJpaRepository
+        Admin adminEntity = adminJpaRepository
                 .findByUsernameIs(pwdEditDTO.getUsername());
         adminEntity.updatePassword(encodePassword);
         adminJpaRepository.save(adminEntity);
@@ -33,7 +33,7 @@ public class AdminCertService{
 
     @Transactional
     public void updateEmail(EditEmailDTO editEmailDTO) {
-        AdminEntity adminEntity = adminJpaRepository
+        Admin adminEntity = adminJpaRepository
                 .findByUsernameIs(editEmailDTO.getUsername());
         adminEntity.updateEmail(editEmailDTO);
         adminJpaRepository.save(adminEntity);

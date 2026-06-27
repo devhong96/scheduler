@@ -1,10 +1,10 @@
 package com.attendance.scheduler.notification.application;
 
-import com.attendance.scheduler.notification.domain.NotificationEntity;
+import com.attendance.scheduler.notification.domain.Notification;
 import com.attendance.scheduler.notification.dto.NotificationDTO;
 import com.attendance.scheduler.notification.repository.NotificationJpaRepository;
 import com.attendance.scheduler.notification.repository.NotificationRepository;
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,16 +20,16 @@ public class NotificationService {
     private final NotificationJpaRepository notificationJpaRepository;
 
 
-    public void markAsRead(List<NotificationEntity> notificationEntity) {
-        notificationEntity.forEach(NotificationEntity::checked);
+    public void markAsRead(List<Notification> notificationEntity) {
+        notificationEntity.forEach(Notification::checked);
     }
 
-    public List<NotificationDTO> findByTeacherEntityOrderByCreatedDesc(TeacherEntity teacherEntity) {
+    public List<NotificationDTO> findByTeacherEntityOrderByCreatedDesc(Teacher teacherEntity) {
         return notificationRepository.findByTeacherEntityOrderByCreatedDesc(teacherEntity);
     }
 
-    public void CheckedByTeacherEntity(TeacherEntity teacherEntity, Long id) {
-        NotificationEntity notificationEntity = notificationJpaRepository
+    public void CheckedByTeacherEntity(Teacher teacherEntity, Long id) {
+        Notification notificationEntity = notificationJpaRepository
                 .findNotificationEntityByTeacherEntityAndId(teacherEntity, id);
         notificationEntity.checked();
         notificationJpaRepository.save(notificationEntity);

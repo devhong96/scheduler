@@ -1,6 +1,6 @@
 package com.attendance.scheduler.notification.dto;
 
-import com.attendance.scheduler.notification.domain.NotificationEntity;
+import com.attendance.scheduler.notification.domain.Notification;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,8 +19,8 @@ public class NotificationDTO {
 
     private LocalDateTime createdTime;
 
-    public NotificationEntity toEntity(){
-        return NotificationEntity.builder()
+    public Notification toEntity(){
+        return Notification.builder()
                 .message(message)
                 .createdTime(createdTime)
                 .checked(checked)

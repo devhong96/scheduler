@@ -1,6 +1,6 @@
 package com.attendance.scheduler.teacher.dto;
 
-import com.attendance.scheduler.student.domain.StudentEntity;
+import com.attendance.scheduler.student.domain.Student;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,8 +45,8 @@ public class RegisterStudentDTO {
         this.studentParentPhoneNumber = studentParentPhoneNumber.replace("-", "");
     }
 
-    public StudentEntity toEntity(){
-        return StudentEntity.builder()
+    public Student toEntity(){
+        return Student.builder()
                 .studentName(studentName)
                 .studentPhoneNumber(studentParentPhoneNumber)
                 .studentParentPhoneNumber(studentPhoneNumber)

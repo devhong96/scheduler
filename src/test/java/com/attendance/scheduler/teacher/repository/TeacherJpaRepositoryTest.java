@@ -1,6 +1,6 @@
 package com.attendance.scheduler.teacher.repository;
 
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ class TeacherJpaRepositoryTest {
     @Test
     void findByUsernameIs() {
         //When
-        TeacherEntity byUsernameIs = teacherJpaRepository
+        Teacher byUsernameIs = teacherJpaRepository
                 .findByUsernameIs(testTeacherDataSet().getUsername());
         //Then
         assertEquals(testTeacherDataSet().getUsername(), byUsernameIs.getUsername());
@@ -65,7 +65,7 @@ class TeacherJpaRepositoryTest {
     void findByEmailIs() {
 
         //When
-        Optional<TeacherEntity> byEmailIs = Optional.ofNullable(teacherJpaRepository
+        Optional<Teacher> byEmailIs = Optional.ofNullable(teacherJpaRepository
                 .findByEmailIs(testTeacherDataSet().getEmail()));
         //Then
         if(byEmailIs.isPresent()) {

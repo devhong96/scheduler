@@ -1,8 +1,8 @@
 package com.attendance.scheduler.teacher.domain;
 
-import com.attendance.scheduler.course.domain.ClassEntity;
-import com.attendance.scheduler.notification.domain.NotificationEntity;
-import com.attendance.scheduler.student.domain.StudentEntity;
+import com.attendance.scheduler.course.domain.Course;
+import com.attendance.scheduler.notification.domain.Notification;
+import com.attendance.scheduler.student.domain.Student;
 import com.attendance.scheduler.teacher.dto.EditEmailDTO;
 import com.attendance.scheduler.teacher.dto.PwdEditDTO;
 import jakarta.persistence.*;
@@ -23,7 +23,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 @DynamicInsert
 @NoArgsConstructor(access = PROTECTED)
-public class TeacherEntity {
+public class Teacher {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -43,25 +43,25 @@ public class TeacherEntity {
     private boolean approved;
 
     @OneToMany(mappedBy = "teacherEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<StudentEntity> studentEntityList = new ArrayList<>();
+    List<Student> studentEntityList = new ArrayList<>();
 
-    public void setClassEntity(ClassEntity classEntity) {
+    public void setClassEntity(Course classEntity) {
         if(classEntityList == null) classEntityList = new ArrayList<>();
         this.classEntityList.add(classEntity);
     }
 
     @OneToMany(mappedBy = "teacherEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<ClassEntity> classEntityList = new ArrayList<>();
+    List<Course> classEntityList = new ArrayList<>();
 
-    public void setStudentEntity(StudentEntity studentEntity) {
+    public void setStudentEntity(Student studentEntity) {
         if(studentEntityList == null) studentEntityList = new ArrayList<>();
         this.studentEntityList.add(studentEntity);
     }
 
     @OneToMany(mappedBy = "teacherEntity", cascade = CascadeType.ALL)
-    List<NotificationEntity> notificationEntityList = new ArrayList<>();
+    List<Notification> notificationEntityList = new ArrayList<>();
 
-    public void setNotificationEntity(NotificationEntity notificationEntity) {
+    public void setNotificationEntity(Notification notificationEntity) {
         if(notificationEntityList == null) notificationEntityList = new ArrayList<>();
         this.notificationEntityList.add(notificationEntity);
     }
@@ -79,7 +79,7 @@ public class TeacherEntity {
     }
 
     @Builder
-    public TeacherEntity(String username, String teacherName, String password, String email, String role, boolean approved) {
+    public Teacher(String username, String teacherName, String password, String email, String role, boolean approved) {
         this.username = username;
         this.teacherName = teacherName;
         this.password = password;

@@ -1,7 +1,7 @@
 package com.attendance.scheduler.admin.domain;
 
 import com.attendance.scheduler.admin.dto.EditEmailDTO;
-import com.attendance.scheduler.board.domain.BoardEntity;
+import com.attendance.scheduler.board.domain.Board;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +22,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @Table(name = "admin")
 @NoArgsConstructor(access = PROTECTED)
-public class AdminEntity {
+public class Admin {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "admin_id")
@@ -35,7 +35,7 @@ public class AdminEntity {
     private String email;
 
     @Builder
-    public AdminEntity(Long id, String name, String username, String password, String email) {
+    public Admin(Long id, String name, String username, String password, String email) {
         this.id = id;
         this.name = name;
         this.username = username;
@@ -44,9 +44,9 @@ public class AdminEntity {
     }
 
     @OneToMany(mappedBy = "adminEntity")
-    List<BoardEntity> boardEntityList = new ArrayList<>();
+    List<Board> boardEntityList = new ArrayList<>();
 
-    public void setBoardEntity(BoardEntity boardEntity) {
+    public void setBoardEntity(Board boardEntity) {
         this.boardEntityList.add(boardEntity);
     }
 

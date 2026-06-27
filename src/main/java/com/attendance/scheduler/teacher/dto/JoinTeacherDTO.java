@@ -1,6 +1,6 @@
 package com.attendance.scheduler.teacher.dto;
 
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,8 +30,8 @@ public class JoinTeacherDTO {
         return new TeacherDTO();
     }
 
-    public TeacherEntity toEntity(){
-        return TeacherEntity.builder()
+    public Teacher toEntity(){
+        return Teacher.builder()
                 .username(username)
                 .password(password)
                 .email(email)

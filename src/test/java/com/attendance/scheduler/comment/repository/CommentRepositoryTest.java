@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static com.attendance.scheduler.comment.domain.entity.QCommentEntity.commentEntity;
+import static com.attendance.scheduler.comment.domain.entity.QComment.comment1;
 
 @SpringBootTest
 @RequiredArgsConstructor
@@ -23,12 +23,12 @@ class CommentRepositoryTest {
     void getCommentList() {
         List<CommentDTO> fetch = queryFactory
                 .select(Projections.fields(CommentDTO.class,
-                        commentEntity.id,
-                        commentEntity.commentAuthor,
-                        commentEntity.comment,
-                        commentEntity.creationTimeStamp))
-                .from(commentEntity)
-                .where(commentEntity.boardEntity.id.eq(1L))
+                        comment1.id,
+                        comment1.commentAuthor,
+                        comment1.comment,
+                        comment1.creationTimeStamp))
+                .from(comment1)
+                .where(comment1.boardEntity.id.eq(1L))
                 .fetch();
     }
 }

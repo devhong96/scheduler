@@ -1,8 +1,8 @@
 package com.attendance.scheduler.student.domain;
 
-import com.attendance.scheduler.comment.domain.entity.CommentEntity;
-import com.attendance.scheduler.course.domain.ClassEntity;
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.comment.domain.entity.Comment;
+import com.attendance.scheduler.course.domain.Course;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -25,7 +25,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 @DynamicInsert
 @NoArgsConstructor(access = PROTECTED)
-public class StudentEntity {
+public class Student {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -41,9 +41,9 @@ public class StudentEntity {
 
     @NotNull
     @ManyToOne(fetch = LAZY, optional = false, cascade = CascadeType.PERSIST)
-    private TeacherEntity teacherEntity;
+    private Teacher teacherEntity;
 
-    public void setTeacherEntity(TeacherEntity teacherEntity) {
+    public void setTeacherEntity(Teacher teacherEntity) {
         if (this.teacherEntity != null) {
             this.teacherEntity.getStudentEntityList().remove(this);
         }
@@ -54,22 +54,22 @@ public class StudentEntity {
     }
 
     @OneToMany(mappedBy = "studentEntity")
-    List<CommentEntity> commentEntityList = new ArrayList<>();
+    List<Comment> commentEntityList = new ArrayList<>();
 
-    public void addCommentEntity(CommentEntity commentEntity) {
+    public void addCommentEntity(Comment commentEntity) {
         this.commentEntityList.add(commentEntity);
     }
 
     @OneToOne(mappedBy = "studentEntity")
     @PrimaryKeyJoinColumn
-    private ClassEntity classEntity;
+    private Course classEntity;
 
-    public void addClassEntity(ClassEntity classEntity) {
+    public void addClassEntity(Course classEntity) {
         this.classEntity = classEntity;
     }
 
     @Builder
-    public StudentEntity(String studentName, String studentPhoneNumber, String studentAddress, String studentDetailedAddress, String studentParentPhoneNumber, Timestamp creationTimestamp) {
+    public Student(String studentName, String studentPhoneNumber, String studentAddress, String studentDetailedAddress, String studentParentPhoneNumber, Timestamp creationTimestamp) {
         this.studentName = studentName;
         this.studentPhoneNumber = studentPhoneNumber;
         this.studentAddress = studentAddress;

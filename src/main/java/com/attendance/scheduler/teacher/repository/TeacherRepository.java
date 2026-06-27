@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.attendance.scheduler.teacher.domain.QTeacherEntity.teacherEntity;
+import static com.attendance.scheduler.teacher.domain.QTeacher.teacher;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,23 +19,23 @@ public class TeacherRepository {
     public List<TeacherDTO> getTeacherList(){
         return queryFactory
                 .select(Projections.fields(TeacherDTO.class,
-                        teacherEntity.id,
-                        teacherEntity.username,
-                        teacherEntity.teacherName,
-                        teacherEntity.approved))
-                .from(teacherEntity)
+                        teacher.id,
+                        teacher.username,
+                        teacher.teacherName,
+                        teacher.approved))
+                .from(teacher)
                 .fetch();
     }
 
     public List<TeacherDTO> getTeacherInfoByUsername(String username){
         return queryFactory
                 .select(Projections.fields(TeacherDTO.class,
-                        teacherEntity.id,
-                        teacherEntity.username,
-                        teacherEntity.teacherName,
-                        teacherEntity.approved))
-                .from(teacherEntity)
-                .where(teacherEntity.username.eq(username))
+                        teacher.id,
+                        teacher.username,
+                        teacher.teacherName,
+                        teacher.approved))
+                .from(teacher)
+                .where(teacher.username.eq(username))
                 .fetch();
     }
 }

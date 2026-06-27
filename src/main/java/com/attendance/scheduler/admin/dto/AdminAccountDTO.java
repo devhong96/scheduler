@@ -1,6 +1,6 @@
 package com.attendance.scheduler.admin.dto;
 
-import com.attendance.scheduler.admin.domain.AdminEntity;
+import com.attendance.scheduler.admin.domain.Admin;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +21,8 @@ public class AdminAccountDTO {
 
     private String email;
 
-    public AdminEntity toEntity() {
-        return AdminEntity.builder()
+    public Admin toEntity() {
+        return Admin.builder()
                 .username(username)
                 .password(password)
                 .name(name)

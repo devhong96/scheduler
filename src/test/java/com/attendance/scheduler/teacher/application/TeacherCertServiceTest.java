@@ -2,7 +2,7 @@ package com.attendance.scheduler.teacher.application;
 
 
 import com.attendance.scheduler.common.dto.LoginDTO;
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import com.attendance.scheduler.teacher.dto.EmailDTO;
 import com.attendance.scheduler.teacher.dto.PwdEditDTO;
 import com.attendance.scheduler.teacher.repository.TeacherJpaRepository;
@@ -39,7 +39,7 @@ class TeacherCertServiceTest {
     @BeforeEach
     @DisplayName("회원가입")
     public void joinTeacherDTO() {
-        Optional<TeacherEntity> existingTeacher = Optional
+        Optional<Teacher> existingTeacher = Optional
                 .ofNullable(teacherJpaRepository
                         .findByUsernameIs(testTeacherDataSet().getUsername()));
 
@@ -96,7 +96,7 @@ class TeacherCertServiceTest {
         EmailDTO emailDTO = new EmailDTO();
         emailDTO.setUsername(testTeacherDataSet().getUsername());
 
-        TeacherEntity teacherEntity = teacherJpaRepository
+        Teacher teacherEntity = teacherJpaRepository
                 .findByUsernameIs(emailDTO.getUsername());
 
         EmailDTO build = EmailDTO.builder()
@@ -134,7 +134,7 @@ class TeacherCertServiceTest {
 
         //when
         teacherCertService.initializePassword(pwdEditDTO);
-        TeacherEntity byUsernameIs = teacherJpaRepository
+        Teacher byUsernameIs = teacherJpaRepository
                 .findByUsernameIs(pwdEditDTO.getUsername());
 
         //then

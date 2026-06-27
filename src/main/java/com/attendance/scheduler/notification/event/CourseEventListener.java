@@ -1,7 +1,7 @@
 package com.attendance.scheduler.notification.event;
 
 import com.attendance.scheduler.course.event.CourseEvent;
-import com.attendance.scheduler.notification.domain.NotificationEntity;
+import com.attendance.scheduler.notification.domain.Notification;
 import com.attendance.scheduler.notification.repository.NotificationJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class CourseEventListener {
     @EventListener
     public void handleCourseEvent(CourseEvent courseEvent) {
 
-        NotificationEntity entity = NotificationEntity.builder()
+        Notification entity = Notification.builder()
                 .teacherEntity(courseEvent.getTeacherEntity())
                 .message(courseEvent.getMessage())
                 .createdTime(LocalDateTime.now())

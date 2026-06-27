@@ -1,6 +1,6 @@
 package com.attendance.scheduler.course.dto;
 
-import com.attendance.scheduler.course.domain.ClassEntity;
+import com.attendance.scheduler.course.domain.Course;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,8 +37,8 @@ public class ClassDTO {
 
     private Timestamp updateTimeStamp;
 
-    public ClassEntity toEntity() {
-        return ClassEntity.builder()
+    public Course toEntity() {
+        return Course.builder()
                 .monday(monday)
                 .tuesday(tuesday)
                 .wednesday(wednesday)

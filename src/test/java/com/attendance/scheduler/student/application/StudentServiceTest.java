@@ -1,6 +1,6 @@
 package com.attendance.scheduler.student.application;
 
-import com.attendance.scheduler.student.domain.StudentEntity;
+import com.attendance.scheduler.student.domain.Student;
 import com.attendance.scheduler.student.repository.StudentJpaRepository;
 import com.attendance.scheduler.teacher.application.TeacherService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ class StudentServiceTest {
     @Test
     @DisplayName("학생 인적 사항 정보 저장")
     void findStudentEntityByStudentName() {
-        Optional<StudentEntity> studentEntityByStudentName
+        Optional<Student> studentEntityByStudentName
                 = Optional.ofNullable(studentJpaRepository.findStudentEntityByStudentName(testStudentInformationDTO().getStudentName()));
         studentEntityByStudentName.ifPresent( studentEntity ->
                 assertThat(testStudentInformationDTO().getStudentName()).isEqualTo(studentEntity.getStudentName()));

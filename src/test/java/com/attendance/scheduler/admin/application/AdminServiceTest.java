@@ -1,12 +1,12 @@
 package com.attendance.scheduler.admin.application;
 
-import com.attendance.scheduler.admin.domain.AdminEntity;
+import com.attendance.scheduler.admin.domain.Admin;
 import com.attendance.scheduler.admin.dto.ChangeTeacherDTO;
 import com.attendance.scheduler.admin.dto.EditEmailDTO;
 import com.attendance.scheduler.admin.dto.EmailDTO;
 import com.attendance.scheduler.admin.repository.AdminJpaRepository;
 import com.attendance.scheduler.teacher.application.TeacherService;
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import com.attendance.scheduler.teacher.repository.TeacherJpaRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ class AdminServiceTest {
 
     @BeforeEach
     void joinSampleTeacherAccount(){
-        Optional<TeacherEntity> existingTeacher = Optional
+        Optional<Teacher> existingTeacher = Optional
                 .ofNullable(teacherJpaRepository
                         .findByUsernameIs(testTeacherDataSet().getUsername()));
         if (existingTeacher.isEmpty()) {
@@ -48,7 +48,7 @@ class AdminServiceTest {
     void findAdminEmailByID() {
         EmailDTO emailDTO = new EmailDTO();
         emailDTO.setUsername("admin");
-        AdminEntity adminAccount = adminJpaRepository
+        Admin adminAccount = adminJpaRepository
                 .findByUsernameIs(emailDTO.getUsername());
 
         EmailDTO build = EmailDTO.builder()
@@ -70,7 +70,7 @@ class AdminServiceTest {
 //        adminService.grantAuth(approveTeacherDTO);
 
         //Then
-        TeacherEntity teacherEntity = teacherJpaRepository
+        Teacher teacherEntity = teacherJpaRepository
                 .findByUsernameIs(testTeacherDataSet().getUsername());
         assertTrue(teacherEntity.isApproved());
     }
@@ -85,7 +85,7 @@ class AdminServiceTest {
         adminService.revokeAuth(testTeacherDataSet().getUsername());
 
         //Then
-        TeacherEntity teacherEntity = teacherJpaRepository
+        Teacher teacherEntity = teacherJpaRepository
                 .findByUsernameIs(testTeacherDataSet().getUsername());
         assertFalse(teacherEntity.isApproved());
     }
@@ -127,7 +127,7 @@ class AdminServiceTest {
 
         //When
         adminCertService.updateEmail(editEmailDTO);
-        AdminEntity byUsernameIs = adminJpaRepository
+        Admin byUsernameIs = adminJpaRepository
                 .findByUsernameIs(editEmailDTO.getUsername());
 
         //Then

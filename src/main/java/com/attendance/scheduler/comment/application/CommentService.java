@@ -1,12 +1,12 @@
 package com.attendance.scheduler.comment.application;
 
-import com.attendance.scheduler.board.domain.BoardEntity;
+import com.attendance.scheduler.board.domain.Board;
 import com.attendance.scheduler.board.repository.BoardJpaRepository;
-import com.attendance.scheduler.comment.domain.entity.CommentEntity;
+import com.attendance.scheduler.comment.domain.entity.Comment;
 import com.attendance.scheduler.comment.dto.CommentDTO;
 import com.attendance.scheduler.comment.repository.CommentJpaRepository;
 import com.attendance.scheduler.comment.repository.CommentRepository;
-import com.attendance.scheduler.student.domain.StudentEntity;
+import com.attendance.scheduler.student.domain.Student;
 import com.attendance.scheduler.student.repository.StudentJpaRepository;
 import com.attendance.scheduler.student.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +31,9 @@ public class CommentService {
 
     @Transactional
     public void saveComment(CommentDTO commentDTO) {
-        CommentEntity entity = commentDTO.toEntity();
-        BoardEntity boardEntity = boardJpaRepository.findBoardEntityById(commentDTO.getNoticeId());
-        StudentEntity studentEntity = studentJpaRepository.findStudentEntityByStudentName(commentDTO.getCommentAuthor());
+        Comment entity = commentDTO.toEntity();
+        Board boardEntity = boardJpaRepository.findBoardEntityById(commentDTO.getNoticeId());
+        Student studentEntity = studentJpaRepository.findStudentEntityByStudentName(commentDTO.getCommentAuthor());
 
         entity.setBoardEntity(boardEntity);
         entity.setStudentEntity(studentEntity);

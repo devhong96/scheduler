@@ -1,7 +1,7 @@
 package com.attendance.scheduler.course.domain;
 
-import com.attendance.scheduler.student.domain.StudentEntity;
-import com.attendance.scheduler.teacher.domain.TeacherEntity;
+import com.attendance.scheduler.student.domain.Student;
+import com.attendance.scheduler.teacher.domain.Teacher;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -19,7 +19,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @DynamicUpdate
 @NoArgsConstructor(access = PROTECTED)
-public class ClassEntity {
+public class Course {
 
     @Id
     private Long id;
@@ -38,9 +38,9 @@ public class ClassEntity {
 
     @NotNull
     @ManyToOne(fetch = LAZY)
-    private TeacherEntity teacherEntity;
+    private Teacher teacherEntity;
 
-    public void setTeacherEntity(TeacherEntity teacherEntity) {
+    public void setTeacherEntity(Teacher teacherEntity) {
         if (this.teacherEntity != null) {
             this.teacherEntity.setClassEntity(null);
         }
@@ -52,9 +52,9 @@ public class ClassEntity {
 
     @MapsId
     @OneToOne(fetch = LAZY)
-    private StudentEntity studentEntity;
+    private Student studentEntity;
 
-    public void setStudentEntity(StudentEntity studentEntity) {
+    public void setStudentEntity(Student studentEntity) {
         if(this.studentEntity != null){
             this.studentEntity.addClassEntity(null);
         }
@@ -65,7 +65,7 @@ public class ClassEntity {
     }
 
     @Builder
-    public ClassEntity(Integer monday, Integer tuesday, Integer wednesday, Integer thursday, Integer friday, Timestamp updateTimeStamp) {
+    public Course(Integer monday, Integer tuesday, Integer wednesday, Integer thursday, Integer friday, Timestamp updateTimeStamp) {
         this.monday = monday;
         this.tuesday = tuesday;
         this.wednesday = wednesday;

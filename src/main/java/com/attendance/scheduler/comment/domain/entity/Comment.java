@@ -1,7 +1,7 @@
 package com.attendance.scheduler.comment.domain.entity;
 
-import com.attendance.scheduler.board.domain.BoardEntity;
-import com.attendance.scheduler.student.domain.StudentEntity;
+import com.attendance.scheduler.board.domain.Board;
+import com.attendance.scheduler.student.domain.Student;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +21,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 @DynamicInsert
 @NoArgsConstructor(access = PROTECTED)
-public class CommentEntity {
+public class Comment {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -32,9 +32,9 @@ public class CommentEntity {
     private Timestamp creationTimeStamp;
 
     @ManyToOne(fetch = LAZY)
-    private BoardEntity boardEntity;
+    private Board boardEntity;
 
-    public void setBoardEntity(BoardEntity boardEntity) {
+    public void setBoardEntity(Board boardEntity) {
         if (this.boardEntity != null) {
             this.boardEntity.getCommentEntityList().remove(this);
         }
@@ -45,9 +45,9 @@ public class CommentEntity {
     }
 
     @ManyToOne(fetch = LAZY)
-    private StudentEntity studentEntity;
+    private Student studentEntity;
 
-    public void setStudentEntity(StudentEntity studentEntity) {
+    public void setStudentEntity(Student studentEntity) {
         if (this.studentEntity != null) {
             this.studentEntity.getCommentEntityList().remove(this);
         }
@@ -58,7 +58,7 @@ public class CommentEntity {
     }
 
     @Builder
-    public CommentEntity(String commentAuthor, String comment, Timestamp creationTimeStamp) {
+    public Comment(String commentAuthor, String comment, Timestamp creationTimeStamp) {
         this.commentAuthor = commentAuthor;
         this.comment = comment;
         this.creationTimeStamp = creationTimeStamp;
