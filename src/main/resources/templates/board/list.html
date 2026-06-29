@@ -7,6 +7,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Scheduler</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 <style>
@@ -118,7 +120,7 @@
                     <td th:text="${notice.getId()}"></td>
                     <td th:text="${notice.getName()}"></td>
                     <td><a th:href="@{'/board/'+${notice.getId()}}" th:text="${notice.getTitle()}"></a></td>
-                    <td th:text="${#dates.format(notice.getCreationTimestamp(), 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#temporals.format(notice.getCreatedDate(), 'yyyy-MM-dd HH:mm')}"></td>
                     <td th:text="${notice.getViews()}"></td>
                 </tr>
                 </tbody>
@@ -164,5 +166,6 @@
 </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="/js/csrf.js"></script>
 <script type="application/text/javascript" src="js/board/list.js"></script>
 </html>

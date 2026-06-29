@@ -6,6 +6,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Scheduler</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <style>
         input[type="checkbox"] {
@@ -36,7 +38,7 @@
                 <table>
                     <tr>
                         <th><a th:href ="@{/manage/class}"><button class="btn btn-primary" sec:authorize="isAuthenticated()">수업 관리</button></a></th>
-                        <th><a th:href ="@{/logout}"><button class="btn btn-primary" sec:authorize="isAuthenticated()">Logout</button></a></th>
+                        <th><form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" class="d-inline"><button class="btn btn-primary" type="submit">Logout</button></form></th>
                     </tr>
                 </table>
                 <table>
@@ -88,5 +90,6 @@
 </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="/js/csrf.js"></script>
 <script src="/js/admin/teacherList.js"></script>
 </html>

@@ -39,7 +39,7 @@
     <div class="py-2">
         <table>
             <tr>
-                <th><a th:href = "@{/logout}"><button class="btn btn-primary" sec:authorize="isAuthenticated()">Logout</button></a></th>
+                <th><form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" class="d-inline"><button class="btn btn-primary" type="submit">Logout</button></form></th>
                 <th><a th:href = "@{/manage/class}"><button class="btn btn-primary" sec:authorize="isAuthenticated()">수업 관리</button></a></th>
             </tr>
         </table>

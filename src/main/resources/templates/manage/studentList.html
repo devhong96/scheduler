@@ -6,6 +6,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Scheduler</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <style>
 
@@ -37,7 +39,7 @@
                 <tr>
                     <th><a th:href ="@{/manage/class}"><button class="btn btn-primary" sec:authorize="isAuthenticated()">수업 관리</button></a></th>
                     <th><a th:href ="@{/manage/registerStudentInformation}"><button class="btn btn-primary" sec:authorize="hasRole('ROLE_TEACHER')">학생 등록</button></a></th>
-                    <th><a th:href ="@{/logout}"><button class="btn btn-primary" sec:authorize="isAuthenticated()">Logout</button></a></th>
+                    <th><form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" class="d-inline"><button class="btn btn-primary" type="submit">Logout</button></form></th>
                 </tr>
             </table>
             <table class="table caption-top table-responsive" id="jb-table">
@@ -75,7 +77,7 @@
                         </label>
                         <button class="btn btn-primary save-button">저장</button>
                     </td>
-                <td th:text="${#dates.format(student.getCreationTimestamp(), 'yyyy-MM-dd')}"></td>
+                <td th:text="${#temporals.format(student.getCreatedDate(), 'yyyy-MM-dd')}"></td>
                 <td>
                     <div>
                         <form method='post' role="form" th:action="@{/class/findClass}">
@@ -122,5 +124,6 @@
 </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="/js/csrf.js"></script>
 <script src="/js/manage/studentList.js"></script>
 </html>

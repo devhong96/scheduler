@@ -34,7 +34,7 @@
         <div class="board rounded-3 border border-2">
             <h1> 회원 정보가 변경되었습니다. </h1>
             <p>문의사항이 있을시 관리자에게 문의해주세요.</p>
-            <p><a th:href="@{/logout}">메인 화면으로</a></p>
+            <form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-link p-0">메인 화면으로</button></form>
         </div>
     </div>
 </div>
