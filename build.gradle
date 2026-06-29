@@ -1,12 +1,12 @@
 buildscript {
 	ext {
-		queryDslVersion = "5.6.1"
+		queryDslVersion = "7.4.0"
 	}
 }
 
 plugins {
-	id 'org.springframework.boot' version '3.2.5'
-	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.springframework.boot' version '4.1.0'
+	id 'io.spring.dependency-management' version '1.1.7'
 	id 'java'
 }
 
@@ -14,7 +14,7 @@ group = 'com.attendance'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -36,10 +36,10 @@ dependencies {
 
 	//JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation "io.github.openfeign.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
+    implementation "io.github.openfeign.querydsl:querydsl-jpa:${queryDslVersion}"
 
 	//aop
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'org.springframework.boot:spring-boot-starter-aspectj'
 
 	//database
 	implementation 'com.mysql:mysql-connector-j'
@@ -56,7 +56,8 @@ dependencies {
 	//Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-web-services'
-	implementation 'org.thymeleaf:thymeleaf'
+	// 스타터가 thymeleaf-spring6 + Boot의 ThymeleafViewResolver 오토컨피그를 등록 (없으면 뷰가 forward로 빠져 circular view path 발생)
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.springframework.session:spring-session-core'
@@ -75,11 +76,16 @@ dependencies {
 
 	//Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// Spring Boot 4부터 테스트 슬라이스가 모듈로 분리되어 starter-test에 포함되지 않음
+	testImplementation 'org.springframework.boot:spring-boot-data-jpa-test'
+	testImplementation 'org.springframework.boot:spring-boot-jdbc-test'
+	testImplementation 'org.springframework.boot:spring-boot-webmvc-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
 	testImplementation 'io.projectreactor:reactor-test'
-	testAnnotationProcessor'org.projectlombok:lombok:1.18.20'
-	testCompileOnly 'org.projectlombok:lombok:1.18.20'
+	// 버전 고정 시 Java 25의 javac와 호환되지 않으므로 BOM 관리 버전을 사용
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
