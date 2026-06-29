@@ -1,6 +1,6 @@
 package com.attendance.scheduler.infra.Log;
 
-import com.attendance.scheduler.common.dto.LoginDTO;
+import com.attendance.scheduler.common.dto.LoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -17,11 +17,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Order(1)
 public class IpAspect {
     String str = "";
-    @Before("execution(* com.attendance.scheduler.*.controller.*.*(..))")
+    @Before("execution(* com.attendance.scheduler..*Controller.*(..))")
     public void beforeLog(JoinPoint joinPoint) {
 
         HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        LoginDTO loginDTO = (LoginDTO) req.getSession().getAttribute("username");
+        LoginRequest loginDTO = (LoginRequest) req.getSession().getAttribute("username");
 
         String className = joinPoint.getTarget().getClass().getSimpleName();
 
@@ -32,7 +32,7 @@ public class IpAspect {
         str += " [ip] " + getRemoteAddr(req);
 
         if(loginDTO != null) {
-            str += "(email:" + loginDTO.getUsername() + ")";
+            str += "(email:" + loginDTO.username() + ")";
         }
 
         log.info(str);

@@ -1,16 +1,15 @@
 package com.attendance.scheduler.comment.domain.entity;
 
 import com.attendance.scheduler.board.domain.Board;
+import com.attendance.scheduler.common.domain.BaseEntity;
 import com.attendance.scheduler.student.domain.Student;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.sql.Timestamp;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -21,24 +20,27 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 @DynamicInsert
 @NoArgsConstructor(access = PROTECTED)
-public class Comment {
+public class Comment extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 50)
     private String commentAuthor;
+
+    @Column(nullable = false, length = 500)
     private String comment;
 
-    @CreationTimestamp
-    private Timestamp creationTimeStamp;
-
+    @NotNull
     @ManyToOne(fetch = LAZY)
-    private Board boardEntity;
+    private Board board;
 
-    public void setBoardEntity(Board boardEntity) {
-        if (this.boardEntity != null) {
-            this.boardEntity.getCommentEntityList().remove(this);
+    public void setBoard(Board boardEntity) {
+        if (this.board != null) {
+            this.board.getCommentEntityList().remove(this);
         }
-        this.boardEntity = boardEntity;
+        this.board = boardEntity;
         if (boardEntity != null) {
             boardEntity.setCommentEntity(this);
         }
@@ -58,9 +60,8 @@ public class Comment {
     }
 
     @Builder
-    public Comment(String commentAuthor, String comment, Timestamp creationTimeStamp) {
+    public Comment(String commentAuthor, String comment) {
         this.commentAuthor = commentAuthor;
         this.comment = comment;
-        this.creationTimeStamp = creationTimeStamp;
     }
 }

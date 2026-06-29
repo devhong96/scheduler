@@ -1,80 +1,37 @@
 package com.attendance.scheduler.testDataSet;
 
-import com.attendance.scheduler.course.dto.ClassDTO;
-import com.attendance.scheduler.teacher.dto.JoinTeacherDTO;
-import com.attendance.scheduler.teacher.dto.RegisterStudentDTO;
+import com.attendance.scheduler.course.dto.ClassRequest;
+import com.attendance.scheduler.teacher.dto.JoinTeacherRequest;
+import com.attendance.scheduler.teacher.dto.RegisterStudentRequest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class TestDataSet {
 
-    public static ClassDTO testStudentClassDataSet(){
-        ClassDTO classDTO = new ClassDTO();
-        classDTO.setStudentName("김학생");
-        classDTO.setMonday(1);
-        classDTO.setTuesday(2);
-        classDTO.setWednesday(3);
-        classDTO.setThursday(4);
-        classDTO.setFriday(5);
-        return classDTO;
+    public static ClassRequest testStudentClassDataSet() {
+        return new ClassRequest("김학생", 1, 2, 3, 4, 5);
     }
 
-    public static ClassDTO test2StudentClassDataSet(){
-        ClassDTO classDTO = new ClassDTO();
-        classDTO.setStudentName("이학생");
-        classDTO.setMonday(2);
-        classDTO.setTuesday(3);
-        classDTO.setWednesday(4);
-        classDTO.setThursday(5);
-        classDTO.setFriday(6);
-        return classDTO;
+    public static ClassRequest test2StudentClassDataSet() {
+        return new ClassRequest("이학생", 2, 3, 4, 5, 6);
     }
 
-    public static ClassDTO testStudent_duplicated(){
-        ClassDTO classDTO = new ClassDTO();
-        classDTO.setStudentName("박학생");
-        classDTO.setMonday(1);
-        classDTO.setTuesday(2);
-        classDTO.setWednesday(3);
-        classDTO.setThursday(4);
-        classDTO.setFriday(5);
-        return classDTO;
+    public static ClassRequest testStudent_duplicated() {
+        return new ClassRequest("박학생", 1, 2, 3, 4, 5);
     }
 
-    public static JoinTeacherDTO testTeacherDataSet(){
-        JoinTeacherDTO joinTeacherDTO = new JoinTeacherDTO();
-        joinTeacherDTO.setUsername("testTeacher");
-        joinTeacherDTO.setPassword("123");
-        joinTeacherDTO.setEmail("testTeacherDataSet@gmail.com");
-        joinTeacherDTO.setTeacherName("김교사");
-        joinTeacherDTO.setApproved(true);
-        return joinTeacherDTO;
+    public static JoinTeacherRequest testTeacherDataSet(){
+        return new JoinTeacherRequest("testTeacher", "123", "김교사", "testTeacherDataSet@gmail.com", true);
     }
 
-    public static RegisterStudentDTO testStudentInformationDTO(){
-        RegisterStudentDTO studentInformationDTO = new RegisterStudentDTO();
-        studentInformationDTO.setStudentName("김학생");
-        studentInformationDTO.setStudentPhoneNumber("010-1234-1234");
-        studentInformationDTO.setStudentParentPhoneNumber("010-1234-1233");
-        studentInformationDTO.setStudentAddress("대한민국 저기 어디");
-        studentInformationDTO.setStudentDetailedAddress("어디");
-
-        studentInformationDTO.setTeacherUsername("testTeacher");
-        return studentInformationDTO;
-
+    public static RegisterStudentRequest testStudentInformationDTO(){
+        return new RegisterStudentRequest("김학생", "01012341234", "대한민국 저기 어디", "어디",
+                "01012341233", "", "testTeacher");
     }
 
-    public static RegisterStudentDTO test2StudentInformationDTO(){
-        RegisterStudentDTO studentInformationDTO = new RegisterStudentDTO();
-        studentInformationDTO.setStudentName("이학생");
-        studentInformationDTO.setStudentPhoneNumber("010-4321-4321");
-        studentInformationDTO.setStudentParentPhoneNumber("010-4321-4322");
-        studentInformationDTO.setStudentAddress("대한민국 저기 먼데");
-        studentInformationDTO.setStudentDetailedAddress("먼데");
-        studentInformationDTO.setTeacherUsername("testTeacher");
-
-        return studentInformationDTO;
-
+    public static RegisterStudentRequest test2StudentInformationDTO(){
+        return new RegisterStudentRequest("이학생", "01043214321", "대한민국 저기 먼데", "먼데",
+                "01043214322", "", "testTeacher");
     }
 
 }

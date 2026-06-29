@@ -1,5 +1,6 @@
 package com.attendance.scheduler.notification.domain;
 
+import com.attendance.scheduler.common.domain.BaseEntity;
 import com.attendance.scheduler.teacher.domain.Teacher;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -8,8 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.time.LocalDateTime;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -20,12 +19,13 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @Table(name = "notice")
 @NoArgsConstructor(access = PROTECTED)
-public class Notification {
+public class Notification extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 255)
     private String message;
 
     @Column(columnDefinition = "boolean default '0'")
@@ -46,17 +46,14 @@ public class Notification {
         }
     }
 
-    private LocalDateTime createdTime;
-
     public void checked() {
         this.checked = true;
     }
 
     @Builder
-    public Notification(Teacher teacherEntity, String message, boolean checked, LocalDateTime createdTime) {
+    public Notification(Teacher teacherEntity, String message, boolean checked) {
         this.teacherEntity = teacherEntity;
         this.message = message;
         this.checked = checked;
-        this.createdTime = createdTime;
     }
 }

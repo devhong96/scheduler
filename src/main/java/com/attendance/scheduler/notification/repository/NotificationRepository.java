@@ -1,6 +1,6 @@
 package com.attendance.scheduler.notification.repository;
 
-import com.attendance.scheduler.notification.dto.NotificationDTO;
+import com.attendance.scheduler.notification.dto.NotificationResponse;
 import com.attendance.scheduler.teacher.domain.Teacher;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -17,16 +17,14 @@ public class NotificationRepository {
 
     public final JPAQueryFactory queryFactory;
 
-    public List<NotificationDTO> findByTeacherEntityOrderByCreatedDesc(Teacher teacher) {
+    public List<NotificationResponse> findByTeacherEntityOrderByCreatedDesc(Teacher teacher) {
         return queryFactory
-                .select(Projections.fields(NotificationDTO.class,
+                .select(Projections.constructor(NotificationResponse.class,
                         notification.message,
                         notification.checked,
-                        notification.createdTime))
+                        notification.createdDate))
                 .from(notification)
                 .where(notification.teacherEntity.eq(teacher))
                 .fetch();
     }
-
-
 }

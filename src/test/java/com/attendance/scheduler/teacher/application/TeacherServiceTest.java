@@ -1,6 +1,7 @@
 package com.attendance.scheduler.teacher.application;
+import org.springframework.test.context.ActiveProfiles;
 
-import com.attendance.scheduler.common.dto.LoginDTO;
+import com.attendance.scheduler.common.dto.LoginRequest;
 import com.attendance.scheduler.student.domain.Student;
 import com.attendance.scheduler.student.repository.StudentJpaRepository;
 import com.attendance.scheduler.teacher.repository.TeacherJpaRepository;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @Transactional
 class TeacherServiceTest {
@@ -55,7 +57,7 @@ class TeacherServiceTest {
     @Test
     @DisplayName("교사 계정 삭제")
     void deleteTeacher() {
-        teacherJpaRepository.deleteByUsernameIs(testTeacherDataSet().getUsername());
+        teacherJpaRepository.deleteByUsernameIs(testTeacherDataSet().username());
         boolean duplicateTeacherId = teacherService.findDuplicateTeacherID(testTeacherDataSet());
         assertFalse(duplicateTeacherId);
     }
@@ -65,16 +67,15 @@ class TeacherServiceTest {
     void registerStudentInformation() {
 
         //Given
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setUsername(testTeacherDataSet().getUsername());
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getUsername());
+        LoginRequest loginDTO = new LoginRequest(testTeacherDataSet().username(), testTeacherDataSet().password());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.username());
 
         UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken(testTeacherDataSet().getUsername(), null , userDetails.getAuthorities());
+                new UsernamePasswordAuthenticationToken(testTeacherDataSet().username(), null , userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         Student studentEntityByStudentNameIs = studentJpaRepository
-                .findStudentEntityByStudentName(testStudentInformationDTO().getStudentName());
+                .findStudentEntityByStudentName(testStudentInformationDTO().studentName());
 
         //When
         if(studentEntityByStudentNameIs == null){
@@ -84,7 +85,7 @@ class TeacherServiceTest {
         //Then
         if (studentEntityByStudentNameIs != null) {
             String studentName = studentEntityByStudentNameIs.getStudentName();
-            assertThat(testStudentInformationDTO().getStudentName()).isEqualTo(studentName);
+            assertThat(testStudentInformationDTO().studentName()).isEqualTo(studentName);
         }
     }
 
@@ -94,14 +95,13 @@ class TeacherServiceTest {
     void saveStudentInformation() {
 
         //Given
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setUsername(testTeacherDataSet().getUsername());
+        LoginRequest loginDTO = new LoginRequest(testTeacherDataSet().username(), testTeacherDataSet().password());
 
         UserDetails userDetails = userDetailsService
-                .loadUserByUsername(loginDTO.getUsername());
+                .loadUserByUsername(loginDTO.username());
 
         UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken(testTeacherDataSet().getUsername(),
+                new UsernamePasswordAuthenticationToken(testTeacherDataSet().username(),
                         null , userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
 
@@ -109,7 +109,7 @@ class TeacherServiceTest {
         teacherService.registerStudentInformation(testStudentInformationDTO());
 
         //Then
-        assertThat(testStudentInformationDTO().getStudentName())
-                .isEqualTo(testStudentInformationDTO().getStudentName());
+        assertThat(testStudentInformationDTO().studentName())
+                .isEqualTo(testStudentInformationDTO().studentName());
     }
 }

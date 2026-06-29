@@ -1,7 +1,7 @@
 package com.attendance.scheduler.notification.application;
 
 import com.attendance.scheduler.notification.domain.Notification;
-import com.attendance.scheduler.notification.dto.NotificationDTO;
+import com.attendance.scheduler.notification.dto.NotificationResponse;
 import com.attendance.scheduler.notification.repository.NotificationJpaRepository;
 import com.attendance.scheduler.notification.repository.NotificationRepository;
 import com.attendance.scheduler.teacher.domain.Teacher;
@@ -24,7 +24,7 @@ public class NotificationService {
         notificationEntity.forEach(Notification::checked);
     }
 
-    public List<NotificationDTO> findByTeacherEntityOrderByCreatedDesc(Teacher teacherEntity) {
+    public List<NotificationResponse> findByTeacherEntityOrderByCreatedDesc(Teacher teacherEntity) {
         return notificationRepository.findByTeacherEntityOrderByCreatedDesc(teacherEntity);
     }
 

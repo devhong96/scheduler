@@ -1,5 +1,6 @@
 package com.attendance.scheduler.course.domain;
 
+import com.attendance.scheduler.common.domain.BaseEntity;
 import com.attendance.scheduler.student.domain.Student;
 import com.attendance.scheduler.teacher.domain.Teacher;
 import jakarta.persistence.*;
@@ -8,9 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.sql.Timestamp;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
@@ -19,19 +17,17 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @DynamicUpdate
 @NoArgsConstructor(access = PROTECTED)
-public class Course {
+public class Course extends BaseEntity {
 
     @Id
     private Long id;
 
+    // 요일별 교시: 해당 요일 수업이 없으면 null (의도된 nullable)
     private Integer monday;
     private Integer tuesday;
     private Integer wednesday;
     private Integer thursday;
     private Integer friday;
-
-    @UpdateTimestamp
-    private Timestamp updateTimeStamp;
 
     @Version
     private Long version;
@@ -65,12 +61,19 @@ public class Course {
     }
 
     @Builder
-    public Course(Integer monday, Integer tuesday, Integer wednesday, Integer thursday, Integer friday, Timestamp updateTimeStamp) {
+    public Course(Integer monday, Integer tuesday, Integer wednesday, Integer thursday, Integer friday) {
         this.monday = monday;
         this.tuesday = tuesday;
         this.wednesday = wednesday;
         this.thursday = thursday;
         this.friday = friday;
-        this.updateTimeStamp = updateTimeStamp;
+    }
+
+    public void updateSchedule(Integer monday, Integer tuesday, Integer wednesday, Integer thursday, Integer friday) {
+        this.monday = monday;
+        this.tuesday = tuesday;
+        this.wednesday = wednesday;
+        this.thursday = thursday;
+        this.friday = friday;
     }
 }

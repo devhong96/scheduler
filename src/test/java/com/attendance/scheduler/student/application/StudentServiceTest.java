@@ -1,4 +1,5 @@
 package com.attendance.scheduler.student.application;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.attendance.scheduler.student.domain.Student;
 import com.attendance.scheduler.student.repository.StudentJpaRepository;
@@ -15,6 +16,7 @@ import static com.attendance.scheduler.testDataSet.TestDataSet.testStudentInform
 import static com.attendance.scheduler.testDataSet.TestDataSet.testTeacherDataSet;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@ActiveProfiles("test")
 @SpringBootTest
 class StudentServiceTest {
 
@@ -35,9 +37,9 @@ class StudentServiceTest {
     @DisplayName("학생 인적 사항 정보 저장")
     void findStudentEntityByStudentName() {
         Optional<Student> studentEntityByStudentName
-                = Optional.ofNullable(studentJpaRepository.findStudentEntityByStudentName(testStudentInformationDTO().getStudentName()));
+                = Optional.ofNullable(studentJpaRepository.findStudentEntityByStudentName(testStudentInformationDTO().studentName()));
         studentEntityByStudentName.ifPresent( studentEntity ->
-                assertThat(testStudentInformationDTO().getStudentName()).isEqualTo(studentEntity.getStudentName()));
+                assertThat(testStudentInformationDTO().studentName()).isEqualTo(studentEntity.getStudentName()));
     }
 
 }

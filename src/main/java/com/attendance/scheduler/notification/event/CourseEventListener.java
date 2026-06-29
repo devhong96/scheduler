@@ -10,8 +10,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 @Slf4j
 @Async
 @Component
@@ -27,7 +25,6 @@ public class CourseEventListener {
         Notification entity = Notification.builder()
                 .teacherEntity(courseEvent.getTeacherEntity())
                 .message(courseEvent.getMessage())
-                .createdTime(LocalDateTime.now())
                 .checked(false)
                 .build();
         entity.setTeacherEntity(courseEvent.getTeacherEntity());

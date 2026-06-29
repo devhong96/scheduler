@@ -1,6 +1,6 @@
 package com.attendance.scheduler.comment.repository;
 
-import com.attendance.scheduler.comment.dto.CommentDTO;
+import com.attendance.scheduler.comment.dto.CommentResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +16,15 @@ public class CommentRepository {
 
     public final JPAQueryFactory queryFactory;
 
-    public List<CommentDTO> getCommentList(Long id) {
+    public List<CommentResponse> getCommentList(Long id) {
         return queryFactory
-                .select(Projections.fields(CommentDTO.class,
+                .select(Projections.constructor(CommentResponse.class,
                         comment1.id,
                         comment1.commentAuthor,
                         comment1.comment,
-                        comment1.creationTimeStamp))
+                        comment1.createdDate))
                 .from(comment1)
-                .where(comment1.boardEntity.id.eq(id))
+                .where(comment1.board.id.eq(id))
                 .fetch();
     }
 }

@@ -1,10 +1,10 @@
 package com.attendance.scheduler.admin.application;
 
 import com.attendance.scheduler.admin.domain.Admin;
-import com.attendance.scheduler.admin.dto.EditEmailDTO;
+import com.attendance.scheduler.admin.dto.EditEmailRequest;
 import com.attendance.scheduler.admin.repository.AdminJpaRepository;
-import com.attendance.scheduler.infra.email.FindPasswordDTO;
-import com.attendance.scheduler.teacher.dto.PwdEditDTO;
+import com.attendance.scheduler.infra.email.FindPasswordRequest;
+import com.attendance.scheduler.teacher.dto.PwdEditRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,23 +18,23 @@ public class AdminCertService{
     private final PasswordEncoder passwordEncoder;
     private final AdminJpaRepository adminJpaRepository;
 
-    public boolean emailConfirmation(FindPasswordDTO findPasswordDTO) {
-        return adminJpaRepository.existsByEmail(findPasswordDTO.getEmail());
+    public boolean emailConfirmation(FindPasswordRequest findPasswordDTO) {
+        return adminJpaRepository.existsByEmail(findPasswordDTO.email());
     }
 
     @Transactional
-    public void initializePassword(PwdEditDTO pwdEditDTO) {
-        final String encodePassword = passwordEncoder.encode(pwdEditDTO.getPassword());
+    public void initializePassword(PwdEditRequest pwdEditDTO) {
+        final String encodePassword = passwordEncoder.encode(pwdEditDTO.password());
         Admin adminEntity = adminJpaRepository
-                .findByUsernameIs(pwdEditDTO.getUsername());
+                .findByUsernameIs(pwdEditDTO.username());
         adminEntity.updatePassword(encodePassword);
         adminJpaRepository.save(adminEntity);
     }
 
     @Transactional
-    public void updateEmail(EditEmailDTO editEmailDTO) {
+    public void updateEmail(EditEmailRequest editEmailDTO) {
         Admin adminEntity = adminJpaRepository
-                .findByUsernameIs(editEmailDTO.getUsername());
+                .findByUsernameIs(editEmailDTO.username());
         adminEntity.updateEmail(editEmailDTO);
         adminJpaRepository.save(adminEntity);
     }

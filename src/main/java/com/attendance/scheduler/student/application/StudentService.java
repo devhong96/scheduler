@@ -1,6 +1,6 @@
 package com.attendance.scheduler.student.application;
 
-import com.attendance.scheduler.comment.dto.CommentDTO;
+import com.attendance.scheduler.comment.dto.CommentRequest;
 import com.attendance.scheduler.student.repository.StudentJpaRepository;
 import com.attendance.scheduler.student.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class StudentService {
         return studentJpaRepository.existsByStudentNameIs(studentName);
     }
 
-    public boolean existStudentEntityByStudentNameAndStudentParentPhoneNumber(CommentDTO commentDTO) {
-        return studentRepository.existStudentEntityByStudentNameAndStudentParentPhoneNumber(commentDTO);
+    public boolean existStudentEntityByStudentNameAndStudentParentPhoneNumber(CommentRequest commentRequest) {
+        return studentRepository.existStudentEntityByStudentNameAndStudentParentPhoneNumber(commentRequest);
     }
 }

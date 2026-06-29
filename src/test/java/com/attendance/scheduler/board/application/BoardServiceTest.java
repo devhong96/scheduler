@@ -1,9 +1,10 @@
 package com.attendance.scheduler.board.application;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.attendance.scheduler.admin.domain.Admin;
 import com.attendance.scheduler.admin.repository.AdminJpaRepository;
 import com.attendance.scheduler.board.domain.Board;
-import com.attendance.scheduler.board.dto.BoardDTO;
+import com.attendance.scheduler.board.dto.BoardRequest;
 import com.attendance.scheduler.board.repository.BoardJpaRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @Transactional
 class BoardServiceTest {
@@ -25,15 +27,11 @@ class BoardServiceTest {
 //    @Rollback(value = false)
     void pageNoticeList() {
 
-        BoardDTO boardDTO = new BoardDTO();
-
         for (int i = 0; i < 150; i++) {
-            boardDTO.setTitle(String.valueOf(i));
-            boardDTO.setContent("123");
-            boardDTO.setName("관리자");
+            BoardRequest boardRequest = new BoardRequest(0L, String.valueOf(i), "123", "관리자");
             Admin admin = adminJpaRepository.findByUsernameIs("admin");
-            Board entity = boardDTO.toEntity();
-            entity.setAdminEntity(admin);
+            Board entity = boardRequest.toEntity();
+            entity.setAdmin(admin);
             boardJpaRepository.save(entity);
 
         }
@@ -43,15 +41,11 @@ class BoardServiceTest {
     void writeNotice() {
 
         //given //when
-        BoardDTO boardDTO = new BoardDTO();
-
         for (int i = 0; i < 1; i++) {
-            boardDTO.setTitle(String.valueOf(i));
-            boardDTO.setContent("123");
-            boardDTO.setName("관리자");
+            BoardRequest boardRequest = new BoardRequest(0L, String.valueOf(i), "123", "관리자");
             Admin admin = adminJpaRepository.findByUsernameIs("admin");
-            Board entity = boardDTO.toEntity();
-            entity.setAdminEntity(admin);
+            Board entity = boardRequest.toEntity();
+            entity.setAdmin(admin);
             boardJpaRepository.save(entity);
         }
         //then

@@ -14,7 +14,7 @@ public class RuntimeLoggingAspect {
 
 
     @Order(2)
-    @Around("execution(* com.attendance.scheduler.*.controller.*.*(..))")
+    @Around("execution(* com.attendance.scheduler..*Controller.*(..))")
     public Object logController(ProceedingJoinPoint joinPoint) throws Throwable {
         String layer = joinPoint.getTarget().getClass().getSimpleName();
         String location = joinPoint.getSignature().getDeclaringTypeName();

@@ -1,11 +1,14 @@
 package com.attendance.scheduler.course.application;
+import org.springframework.test.context.ActiveProfiles;
 
-import com.attendance.scheduler.common.dto.LoginDTO;
-import com.attendance.scheduler.course.dto.ClassDTO;
-import com.attendance.scheduler.course.dto.StudentClassDTO;
+import com.attendance.scheduler.common.dto.LoginRequest;
+import com.attendance.scheduler.course.dto.ClassRequest;
+import com.attendance.scheduler.course.dto.ClassResponse;
+import com.attendance.scheduler.course.dto.StudentClassRequest;
+import com.attendance.scheduler.course.dto.StudentClassResponse;
 import com.attendance.scheduler.course.repository.ClassRepository;
 import com.attendance.scheduler.student.application.StudentService;
-import com.attendance.scheduler.student.dto.ClassListDTO;
+import com.attendance.scheduler.student.dto.ClassListResponse;
 import com.attendance.scheduler.teacher.application.TeacherService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +29,7 @@ import static com.attendance.scheduler.testDataSet.TestDataSet.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @Transactional
 class ClassServiceTest {
@@ -37,7 +41,7 @@ class ClassServiceTest {
     @Autowired private UserDetailsService userDetailsService;
 
 
-    private StudentClassDTO studentClassDTO;
+    private StudentClassRequest studentClassDTO;
 
     @BeforeEach
     void beforeEach() throws InterruptedException {
@@ -50,21 +54,20 @@ class ClassServiceTest {
         }
 
         //Given, 교사 로그인
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setUsername(testTeacherDataSet().getUsername());
+        LoginRequest loginDTO = new LoginRequest(testTeacherDataSet().username(), testTeacherDataSet().password());
 
         UserDetails userDetails = userDetailsService
-                .loadUserByUsername(loginDTO.getUsername());
+                .loadUserByUsername(loginDTO.username());
 
         UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken(testTeacherDataSet().getUsername(),
-                        testTeacherDataSet().getPassword() , userDetails.getAuthorities());
+                new UsernamePasswordAuthenticationToken(testTeacherDataSet().username(),
+                        testTeacherDataSet().password() , userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
 
 
         //테스트 학생 등록
         boolean studentEntityByStudentName = studentService
-                .existStudentEntityByStudentName(testStudentClassDataSet().getStudentName());
+                .existStudentEntityByStudentName(testStudentClassDataSet().studentName());
 
         if(!studentEntityByStudentName){
             teacherService.registerStudentInformation(testStudentInformationDTO());
@@ -72,38 +75,37 @@ class ClassServiceTest {
         }
 
         boolean studentEntityByStudentName1 = studentService
-                .existStudentEntityByStudentName(test2StudentClassDataSet().getStudentName());
+                .existStudentEntityByStudentName(test2StudentClassDataSet().studentName());
         //테스트 학생1 등록
         if(!studentEntityByStudentName1){
             teacherService.registerStudentInformation(test2StudentInformationDTO());
             classService.saveClassTable(test2StudentClassDataSet());
         }
 
-        studentClassDTO = new StudentClassDTO();
-        studentClassDTO.setStudentName(testStudentClassDataSet().getStudentName());
+        studentClassDTO = new StudentClassRequest(testStudentClassDataSet().studentName());
     }
 
     @Test
     @DisplayName("(무작위로 호출)값이 제대로 저장되었는지 확인")
     void checkClassList() {
 
-        ClassListDTO classListDTO = ClassListDTO.getInstance();
-        List<ClassDTO> studentClassList = classRepository.getStudentClassList();
+        ClassListResponse classListDTO = ClassListResponse.getInstance();
+        List<ClassResponse> studentClassList = classRepository.getStudentClassList();
 
-        for (ClassDTO classDTO : studentClassList) {
-            classListDTO.getMondayClassList().add(classDTO.getMonday());
-            classListDTO.getTuesdayClassList().add(classDTO.getTuesday());
-            classListDTO.getWednesdayClassList().add(classDTO.getWednesday());
-            classListDTO.getThursdayClassList().add(classDTO.getThursday());
-            classListDTO.getFridayClassList().add(classDTO.getFriday());
+        for (ClassResponse classDTO : studentClassList) {
+            classListDTO.mondayClassList().add(classDTO.monday());
+            classListDTO.tuesdayClassList().add(classDTO.tuesday());
+            classListDTO.wednesdayClassList().add(classDTO.wednesday());
+            classListDTO.thursdayClassList().add(classDTO.thursday());
+            classListDTO.fridayClassList().add(classDTO.friday());
         }
 
         for (int i = 0; i < studentClassList.size(); i++) {
-            assertEquals(classListDTO.getMondayClassList().get(i), studentClassList.get(i).getMonday());
-            assertEquals(classListDTO.getTuesdayClassList().get(i), studentClassList.get(i).getTuesday());
-            assertEquals(classListDTO.getWednesdayClassList().get(i), studentClassList.get(i).getWednesday());
-            assertEquals(classListDTO.getThursdayClassList().get(i), studentClassList.get(i).getThursday());
-            assertEquals(classListDTO.getFridayClassList().get(i), studentClassList.get(i).getFriday());
+            assertEquals(classListDTO.mondayClassList().get(i), studentClassList.get(i).monday());
+            assertEquals(classListDTO.tuesdayClassList().get(i), studentClassList.get(i).tuesday());
+            assertEquals(classListDTO.wednesdayClassList().get(i), studentClassList.get(i).wednesday());
+            assertEquals(classListDTO.thursdayClassList().get(i), studentClassList.get(i).thursday());
+            assertEquals(classListDTO.fridayClassList().get(i), studentClassList.get(i).friday());
         }
     }
 
@@ -112,20 +114,20 @@ class ClassServiceTest {
     void findClassByStudent() {
 
         //Given
-        List<ClassDTO> classList = Arrays
+        List<ClassRequest> classList = Arrays
                 .asList(testStudentClassDataSet(), test2StudentClassDataSet());
 
         //when
-        List<ClassDTO> classByStudent = classService
+        List<ClassResponse> classByStudent = classService
                 .findStudentClassList();
 
         //then
         for (int i = 0; i < classByStudent.size(); i++) {
-            assertEquals(classList.get(i).getMonday(), classByStudent.get(i).getMonday());
-            assertEquals(classList.get(i).getTuesday(), classByStudent.get(i).getTuesday());
-            assertEquals(classList.get(i).getWednesday(), classByStudent.get(i).getWednesday());
-            assertEquals(classList.get(i).getThursday(), classByStudent.get(i).getThursday());
-            assertEquals(classList.get(i).getFriday(), classByStudent.get(i).getFriday());
+            assertEquals(classList.get(i).monday(), classByStudent.get(i).monday());
+            assertEquals(classList.get(i).tuesday(), classByStudent.get(i).tuesday());
+            assertEquals(classList.get(i).wednesday(), classByStudent.get(i).wednesday());
+            assertEquals(classList.get(i).thursday(), classByStudent.get(i).thursday());
+            assertEquals(classList.get(i).friday(), classByStudent.get(i).friday());
         }
     }
 
@@ -133,10 +135,10 @@ class ClassServiceTest {
     @DisplayName("저장된 수강 정보 확인")
     void findAllClasses() {
         //when
-        ClassListDTO allClasses = classService
-                .findTeachersClasses(test2StudentClassDataSet().getStudentName());
+        ClassListResponse allClasses = classService
+                .findTeachersClasses(test2StudentClassDataSet().studentName());
         //then
-        assertEquals(2, allClasses.getMondayClassList().size());
+        assertEquals(2, allClasses.mondayClassList().size());
     }
 
     @Test
@@ -144,40 +146,40 @@ class ClassServiceTest {
     void findStudentClasses() {
 
         //when
-        Optional<StudentClassDTO> studentClasses = classService
-                .findStudentClasses(studentClassDTO.getStudentName());
+        Optional<StudentClassResponse> studentClasses = classService
+                .findStudentClasses(studentClassDTO.studentName());
 
         //then
         studentClasses.ifPresent(classDTO ->
-                assertThat(testStudentClassDataSet().getStudentName())
-                        .isEqualTo(classDTO.getStudentName()));
+                assertThat(testStudentClassDataSet().studentName())
+                        .isEqualTo(classDTO.studentName()));
     }
 
     @Test
     @DisplayName("수업 정보 저장")
     void saveClassTable() {
 
-        Optional<StudentClassDTO> studentClasses = classService
-                .findStudentClasses(studentClassDTO.getStudentName());
+        Optional<StudentClassResponse> studentClasses = classService
+                .findStudentClasses(studentClassDTO.studentName());
 
         studentClasses.ifPresent(classDTO -> {
-            assertThat(classDTO.getStudentName())
-                    .isEqualTo(testStudentClassDataSet().getStudentName());
+            assertThat(classDTO.studentName())
+                    .isEqualTo(testStudentClassDataSet().studentName());
 
-            assertThat(classDTO.getMonday())
-                    .isEqualTo(testStudentClassDataSet().getMonday());
+            assertThat(classDTO.monday())
+                    .isEqualTo(testStudentClassDataSet().monday());
 
-            assertThat(classDTO.getTuesday())
-                    .isEqualTo(testStudentClassDataSet().getTuesday());
+            assertThat(classDTO.tuesday())
+                    .isEqualTo(testStudentClassDataSet().tuesday());
 
-            assertThat(classDTO.getWednesday())
-                    .isEqualTo(testStudentClassDataSet().getWednesday());
+            assertThat(classDTO.wednesday())
+                    .isEqualTo(testStudentClassDataSet().wednesday());
 
-            assertThat(classDTO.getThursday())
-                    .isEqualTo(testStudentClassDataSet().getThursday());
+            assertThat(classDTO.thursday())
+                    .isEqualTo(testStudentClassDataSet().thursday());
 
-            assertThat(classDTO.getMonday())
-                    .isEqualTo(testStudentClassDataSet().getMonday());
+            assertThat(classDTO.monday())
+                    .isEqualTo(testStudentClassDataSet().monday());
         });
     }
 
@@ -186,35 +188,34 @@ class ClassServiceTest {
     void modifyClass() throws InterruptedException {
 
         //찾는 로직
-        ClassDTO classDTO = testStudentClassDataSet();
-        classDTO.setMonday(4);
+        ClassRequest classRequest = testStudentClassDataSet();
+        classRequest = classRequest.withMonday(4);
 
-        classService.saveClassTable(classDTO);
+        classService.saveClassTable(classRequest);
 
-        studentClassDTO = new StudentClassDTO();
-        studentClassDTO.setStudentName(testStudentClassDataSet().getStudentName());
+        studentClassDTO = new StudentClassRequest(testStudentClassDataSet().studentName());
 
-        Optional<StudentClassDTO> studentClasses = classService
-                .findStudentClasses(studentClassDTO.getStudentName());
+        Optional<StudentClassResponse> studentClasses = classService
+                .findStudentClasses(studentClassDTO.studentName());
 
         studentClasses.ifPresent(ClassList -> {
-            assertThat(ClassList.getStudentName())
-                    .isEqualTo(testStudentClassDataSet().getStudentName());
+            assertThat(ClassList.studentName())
+                    .isEqualTo(testStudentClassDataSet().studentName());
 
-            assertThat(ClassList.getMonday())
+            assertThat(ClassList.monday())
                     .isEqualTo(4);
 
-            assertThat(ClassList.getTuesday())
-                    .isEqualTo(testStudentClassDataSet().getTuesday());
+            assertThat(ClassList.tuesday())
+                    .isEqualTo(testStudentClassDataSet().tuesday());
 
-            assertThat(ClassList.getWednesday())
-                    .isEqualTo(testStudentClassDataSet().getWednesday());
+            assertThat(ClassList.wednesday())
+                    .isEqualTo(testStudentClassDataSet().wednesday());
 
-            assertThat(ClassList.getThursday())
-                    .isEqualTo(testStudentClassDataSet().getThursday());
+            assertThat(ClassList.thursday())
+                    .isEqualTo(testStudentClassDataSet().thursday());
 
-            assertThat(ClassList.getFriday())
-                    .isEqualTo(testStudentClassDataSet().getFriday());
+            assertThat(ClassList.friday())
+                    .isEqualTo(testStudentClassDataSet().friday());
         });
     }
 
@@ -223,8 +224,8 @@ class ClassServiceTest {
     void checkStudentClasses() {
 
         //When
-        Optional<StudentClassDTO> studentClasses = classService
-                .findStudentClasses(studentClassDTO.getStudentName());
+        Optional<StudentClassResponse> studentClasses = classService
+                .findStudentClasses(studentClassDTO.studentName());
 
         //Then
         boolean present = studentClasses.isPresent();

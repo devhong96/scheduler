@@ -1,7 +1,8 @@
 package com.attendance.scheduler.admin.domain;
 
-import com.attendance.scheduler.admin.dto.EditEmailDTO;
+import com.attendance.scheduler.admin.dto.EditEmailRequest;
 import com.attendance.scheduler.board.domain.Board;
+import com.attendance.scheduler.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,13 +23,19 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @Table(name = "admin")
 @NoArgsConstructor(access = PROTECTED)
-public class Admin {
+public class Admin extends BaseEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "admin_id")
     private Long id;
+
+    @Column(nullable = false, length = 30)
     private String name;
+
+    @Column(nullable = false, unique = true, length = 30)
     private String username;
+
+    @Column(nullable = false, length = 100)
     private String password;
 
     @Column(columnDefinition = "varchar(255) default '이메일을 입력해 주세요'")
@@ -43,18 +50,18 @@ public class Admin {
         this.email = email;
     }
 
-    @OneToMany(mappedBy = "adminEntity")
-    List<Board> boardEntityList = new ArrayList<>();
+    @OneToMany(mappedBy = "admin")
+    List<Board> boardList = new ArrayList<>();
 
-    public void setBoardEntity(Board boardEntity) {
-        this.boardEntityList.add(boardEntity);
+    public void setBoard(Board boardEntity) {
+        this.boardList.add(boardEntity);
     }
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
 
-    public void updateEmail(EditEmailDTO editEmailDTO) {
-        this.email = editEmailDTO.getEmail();
+    public void updateEmail(EditEmailRequest editEmailDTO) {
+        this.email = editEmailDTO.email();
     }
 }

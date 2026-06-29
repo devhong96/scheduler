@@ -1,6 +1,6 @@
 package com.attendance.scheduler.teacher.repository;
 
-import com.attendance.scheduler.teacher.dto.TeacherDTO;
+import com.attendance.scheduler.teacher.dto.TeacherResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +16,9 @@ public class TeacherRepository {
 
     public final JPAQueryFactory queryFactory;
 
-    public List<TeacherDTO> getTeacherList(){
+    public List<TeacherResponse> getTeacherList() {
         return queryFactory
-                .select(Projections.fields(TeacherDTO.class,
+                .select(Projections.constructor(TeacherResponse.class,
                         teacher.id,
                         teacher.username,
                         teacher.teacherName,
@@ -27,9 +27,9 @@ public class TeacherRepository {
                 .fetch();
     }
 
-    public List<TeacherDTO> getTeacherInfoByUsername(String username){
+    public List<TeacherResponse> getTeacherInfoByUsername(String username) {
         return queryFactory
-                .select(Projections.fields(TeacherDTO.class,
+                .select(Projections.constructor(TeacherResponse.class,
                         teacher.id,
                         teacher.username,
                         teacher.teacherName,

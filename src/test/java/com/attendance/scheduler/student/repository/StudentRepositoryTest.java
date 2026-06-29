@@ -1,6 +1,7 @@
 package com.attendance.scheduler.student.repository;
+import org.springframework.test.context.ActiveProfiles;
 
-import com.attendance.scheduler.student.dto.StudentInformationDTO;
+import com.attendance.scheduler.student.dto.StudentInformationResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import java.util.List;
 import static com.attendance.scheduler.student.domain.QStudent.student;
 import static com.attendance.scheduler.teacher.domain.QTeacher.teacher;
 
+@ActiveProfiles("test")
 @SpringBootTest
 class StudentRepositoryTest {
 
@@ -22,16 +24,16 @@ class StudentRepositoryTest {
     @Test
     void studentInformationDTOList() {
 
-        List<StudentInformationDTO> studentInformationList = queryFactory
-                .select(Projections.fields(StudentInformationDTO.class,
+        List<StudentInformationResponse> studentInformationList = queryFactory
+                .select(Projections.constructor(StudentInformationResponse.class,
                         student.id,
                         student.studentName,
+                        student.studentPhoneNumber,
                         student.studentAddress,
                         student.studentDetailedAddress,
-                        student.studentPhoneNumber,
                         student.studentParentPhoneNumber,
                         teacher.teacherName,
-                        student.creationTimestamp))
+                        student.createdDate))
                 .from(student)
                 .join(teacher)
                 .on(student.teacherEntity.eq(teacher))

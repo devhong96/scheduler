@@ -1,10 +1,11 @@
 package com.attendance.scheduler.teacher.domain;
 
+import com.attendance.scheduler.common.domain.BaseEntity;
 import com.attendance.scheduler.course.domain.Course;
 import com.attendance.scheduler.notification.domain.Notification;
 import com.attendance.scheduler.student.domain.Student;
-import com.attendance.scheduler.teacher.dto.EditEmailDTO;
-import com.attendance.scheduler.teacher.dto.PwdEditDTO;
+import com.attendance.scheduler.teacher.dto.EditEmailRequest;
+import com.attendance.scheduler.teacher.dto.PwdEditRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,17 +24,21 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 @DynamicInsert
 @NoArgsConstructor(access = PROTECTED)
-public class Teacher {
+public class Teacher extends BaseEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, length = 30)
     private String username;
 
+    @Column(nullable = false, length = 20)
     private String teacherName;
 
+    @Column(nullable = false, length = 100)
     private String password;
 
+    @Column(length = 255)
     private String email;
 
     @Transient
@@ -66,12 +71,12 @@ public class Teacher {
         this.notificationEntityList.add(notificationEntity);
     }
 
-    public void updatePassword(PwdEditDTO pwdEditDTO) {
-        this.password = pwdEditDTO.getPassword();
+    public void updatePassword(PwdEditRequest pwdEditDTO) {
+        this.password = pwdEditDTO.password();
     }
 
-    public void updateEmail(EditEmailDTO editEmailDTO) {
-        this.email = editEmailDTO.getEmail();
+    public void updateEmail(EditEmailRequest editEmailDTO) {
+        this.email = editEmailDTO.email();
     }
 
     public void updateApprove(boolean approved) {

@@ -3,7 +3,8 @@ package com.attendance.scheduler.comment.application;
 import com.attendance.scheduler.board.domain.Board;
 import com.attendance.scheduler.board.repository.BoardJpaRepository;
 import com.attendance.scheduler.comment.domain.entity.Comment;
-import com.attendance.scheduler.comment.dto.CommentDTO;
+import com.attendance.scheduler.comment.dto.CommentRequest;
+import com.attendance.scheduler.comment.dto.CommentResponse;
 import com.attendance.scheduler.comment.repository.CommentJpaRepository;
 import com.attendance.scheduler.comment.repository.CommentRepository;
 import com.attendance.scheduler.student.domain.Student;
@@ -25,24 +26,24 @@ public class CommentService {
     public final CommentRepository commentRepository;
     public final CommentJpaRepository commentJpaRepository;
 
-    public List<CommentDTO> getCommentList(Long id) {
+    public List<CommentResponse> getCommentList(Long id) {
         return commentRepository.getCommentList(id);
     }
 
     @Transactional
-    public void saveComment(CommentDTO commentDTO) {
-        Comment entity = commentDTO.toEntity();
-        Board boardEntity = boardJpaRepository.findBoardEntityById(commentDTO.getNoticeId());
-        Student studentEntity = studentJpaRepository.findStudentEntityByStudentName(commentDTO.getCommentAuthor());
+    public void saveComment(CommentRequest commentRequest) {
+        Comment entity = commentRequest.toEntity();
+        Board boardEntity = boardJpaRepository.findBoardEntityById(commentRequest.noticeId());
+        Student studentEntity = studentJpaRepository.findStudentEntityByStudentName(commentRequest.commentAuthor());
 
-        entity.setBoardEntity(boardEntity);
+        entity.setBoard(boardEntity);
         entity.setStudentEntity(studentEntity);
 
         commentJpaRepository.save(entity);
     }
 
     @Transactional
-    public void deleteComment(CommentDTO commentDTO) {
-        commentJpaRepository.deleteById(commentDTO.getCommentId());
+    public void deleteComment(CommentRequest commentRequest) {
+        commentJpaRepository.deleteById(commentRequest.commentId());
     }
 }

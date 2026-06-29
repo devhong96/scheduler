@@ -1,10 +1,11 @@
 package com.attendance.scheduler.course.repository;
 
 import com.attendance.scheduler.course.domain.Course;
-import com.attendance.scheduler.course.dto.ClassDTO;
-import com.attendance.scheduler.course.dto.StudentClassDTO;
+import com.attendance.scheduler.course.dto.ClassResponse;
+import com.attendance.scheduler.course.dto.StudentClassResponse;
 import com.attendance.scheduler.teacher.domain.Teacher;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,9 @@ public class ClassRepository {
     public final JPAQueryFactory queryFactory;
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    public List<ClassDTO> getStudentClassList(){
+    public List<ClassResponse> getStudentClassList() {
         return queryFactory
-                .select(Projections.fields(ClassDTO.class,
+                .select(Projections.constructor(ClassResponse.class,
                         student.studentName,
                         course.monday,
                         course.tuesday,
@@ -35,7 +36,7 @@ public class ClassRepository {
                         course.thursday,
                         course.friday,
                         teacher.teacherName,
-                        course.updateTimeStamp))
+                        course.lastModifiedDate))
                 .from(course)
                 .join(teacher)
                 .on(course.teacherEntity.eq(teacher))
@@ -44,9 +45,9 @@ public class ClassRepository {
                 .fetch();
     }
 
-    public StudentClassDTO getStudentClassByStudentName(String studentName){
+    public StudentClassResponse getStudentClassByStudentName(String studentName) {
         return queryFactory
-                .select(Projections.fields(StudentClassDTO.class,
+                .select(Projections.constructor(StudentClassResponse.class,
                         student.studentName,
                         course.monday,
                         course.tuesday,
@@ -54,19 +55,21 @@ public class ClassRepository {
                         course.thursday,
                         course.friday))
                 .from(course)
+                .join(student)
+                .on(course.studentEntity.eq(student))
                 .where(student.studentName.eq(studentName))
                 .fetchOne();
     }
 
-    public List<StudentClassDTO> getStudentClassByTeacherEntity(Teacher teacher){
+    public List<StudentClassResponse> getStudentClassByTeacherEntity(Teacher teacher) {
         return queryFactory
-                .select(Projections.fields(StudentClassDTO.class,
+                .select(Projections.constructor(StudentClassResponse.class,
+                        Expressions.constant(""),
                         course.monday,
                         course.tuesday,
                         course.wednesday,
                         course.thursday,
-                        course.friday,
-                        course.teacherEntity))
+                        course.friday))
                 .from(course)
                 .where(course.teacherEntity.eq(teacher))
                 .fetch();
@@ -75,8 +78,8 @@ public class ClassRepository {
     public Optional<Course> getStudentClassEntityByStudentName(String studentName) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(course)
-                .join(student)
-                .on(course.studentEntity.studentName.eq(studentName))
+                .join(course.studentEntity, student)
+                .where(student.studentName.eq(studentName))
                 .fetchOne());
     }
 }

@@ -1,83 +1,67 @@
 package com.attendance.scheduler.infra.email;
 
-import com.attendance.scheduler.teacher.dto.FindIdDTO;
+import com.attendance.scheduler.teacher.dto.FindIdResponse;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
-
+/**
+ * 실제 SMTP로 메일을 발송하는 구현체. test 프로파일 외(운영/로컬)에서 활성화된다.
+ */
 @Service
-@RequiredArgsConstructor
+@Profile("!test")
 @Slf4j
 public class HtmlEmailService implements EmailService {
 
     private final JavaMailSender javaMailSender;
+    private final String from;
+
+    public HtmlEmailService(JavaMailSender javaMailSender,
+                            @Value("${spring.mail.username}") String from) {
+        this.javaMailSender = javaMailSender;
+        this.from = from;
+    }
 
     @Override
-    public void sendUserId(FindIdDTO findIdDTO) {
-        sendEmail(EmailMessageDTO.builder()
-                .from("dev.hsayho@gmail.com")
-                .to(findIdDTO.getEmail())
-                .subject("아이디 찾기")
-                .message("가입하신 아이디는" +
+    public void sendUserId(FindIdResponse findIdResponse) {
+        sendEmail(new EmailMessage(
+                from,
+                findIdResponse.email(),
+                "아이디 찾기",
+                "가입하신 아이디는" +
                         System.lineSeparator() +
-                        findIdDTO.getUsername() + "입니다"
-                )
-                .build());
+                        findIdResponse.username() + "입니다"
+        ));
     }
 
     @Override
-    public void sendAuthNum(FindPasswordDTO findPasswordDTO, HttpSession session) {
-
-        String id = findPasswordDTO.getUsername();
-        String email = findPasswordDTO.getEmail();
-
-        StringBuilder authNum = new StringBuilder();
-        for(int i=0;i<6;i++) {
-            authNum.append((int) (Math.random() * 10));
-        }
-
-        log.info("인증번호={}", authNum);
-        log.info("이메일={} ", email);
-
-        Map<String, Object> authNumMap = new HashMap<>();
-        LocalDateTime expiryDateTime= LocalDateTime.now().plusMinutes(5);
-        authNumMap.put(id, authNum.toString());
-        authNumMap.put("endTime", expiryDateTime);
-
-        session.setMaxInactiveInterval(300);
-        session.setAttribute(id, authNumMap);
-
-        sendEmail(EmailMessageDTO.builder()
-                .from("dev.hsayho@gmail.com")
-                .to(email)
-                .subject("비밀번호 찾기")
-                .message("인증번호는 " + authNum + "입니다")
-                .build());
+    public void sendAuthCode(String email, String authCode) {
+        sendEmail(new EmailMessage(
+                from,
+                email,
+                "비밀번호 찾기",
+                "인증번호는 " + authCode + "입니다"
+        ));
     }
 
-    public void sendEmail(EmailMessageDTO emailMessageDTO) {
+    private void sendEmail(EmailMessage emailMessage) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper;
         try {
-            mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-            mimeMessageHelper.setFrom(emailMessageDTO.getFrom());
-            mimeMessageHelper.setTo(emailMessageDTO.getTo());
-            mimeMessageHelper.setSubject(emailMessageDTO.getSubject());
-            mimeMessageHelper.setText(emailMessageDTO.getMessage(), true);
+            MimeMessageHelper mimeMessageHelper =
+                    new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            mimeMessageHelper.setFrom(emailMessage.from());
+            mimeMessageHelper.setTo(emailMessage.to());
+            mimeMessageHelper.setSubject(emailMessage.subject());
+            mimeMessageHelper.setText(emailMessage.message(), true);
             javaMailSender.send(mimeMessage);
-            log.info("sent email: {}", emailMessageDTO.getMessage());
+            log.info("sent email to {}", emailMessage.to());
         } catch (MessagingException e) {
-            log.error("failed to send email", e);
+            log.error("failed to send email to {}", emailMessage.to(), e);
             throw new RuntimeException(e);
         }
     }

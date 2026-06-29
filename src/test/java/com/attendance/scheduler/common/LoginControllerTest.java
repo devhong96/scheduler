@@ -2,7 +2,7 @@ package com.attendance.scheduler.common;
 
 import com.attendance.scheduler.infra.IntegrationTest;
 import com.attendance.scheduler.teacher.application.TeacherService;
-import com.attendance.scheduler.teacher.dto.JoinTeacherDTO;
+import com.attendance.scheduler.teacher.dto.JoinTeacherRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +25,7 @@ class LoginControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        JoinTeacherDTO joinTeacherDTO = new JoinTeacherDTO();
-        joinTeacherDTO.setUsername("teacher");
-        joinTeacherDTO.setPassword("123");
-        joinTeacherDTO.setEmail("teacher@gmail.com");
-        joinTeacherDTO.setApproved(true);
+        JoinTeacherRequest joinTeacherDTO = new JoinTeacherRequest("teacher", "123", "", "teacher@gmail.com", true);
         teacherService.joinTeacher(joinTeacherDTO);
     }
 

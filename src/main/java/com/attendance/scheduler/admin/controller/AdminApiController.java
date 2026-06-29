@@ -1,7 +1,7 @@
 package com.attendance.scheduler.admin.controller;
 
 import com.attendance.scheduler.admin.application.AdminService;
-import com.attendance.scheduler.admin.dto.ChangeTeacherDTO;
+import com.attendance.scheduler.admin.dto.ChangeTeacherRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class AdminApiController {
     }
 
     @PostMapping("/changeTeacher")
-    public ResponseEntity<String> changeTeacher(ChangeTeacherDTO changeTeacherDTO) {
+    public ResponseEntity<String> changeTeacher(ChangeTeacherRequest changeTeacherDTO) {
         try {
             adminService.changeExistTeacher(changeTeacherDTO);
             return ResponseEntity.ok("변경되었습니다.");

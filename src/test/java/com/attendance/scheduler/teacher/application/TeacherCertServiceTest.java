@@ -1,10 +1,11 @@
 package com.attendance.scheduler.teacher.application;
+import org.springframework.test.context.ActiveProfiles;
 
 
-import com.attendance.scheduler.common.dto.LoginDTO;
+import com.attendance.scheduler.common.dto.LoginRequest;
 import com.attendance.scheduler.teacher.domain.Teacher;
-import com.attendance.scheduler.teacher.dto.EmailDTO;
-import com.attendance.scheduler.teacher.dto.PwdEditDTO;
+import com.attendance.scheduler.teacher.dto.EmailResponse;
+import com.attendance.scheduler.teacher.dto.PwdEditRequest;
 import com.attendance.scheduler.teacher.repository.TeacherJpaRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,7 @@ import static com.attendance.scheduler.testDataSet.TestDataSet.testTeacherDataSe
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @Transactional
 class TeacherCertServiceTest {
@@ -41,7 +43,7 @@ class TeacherCertServiceTest {
     public void joinTeacherDTO() {
         Optional<Teacher> existingTeacher = Optional
                 .ofNullable(teacherJpaRepository
-                        .findByUsernameIs(testTeacherDataSet().getUsername()));
+                        .findByUsernameIs(testTeacherDataSet().username()));
 
         if (existingTeacher.isEmpty()) {
             teacherService.joinTeacher(testTeacherDataSet());
@@ -51,18 +53,16 @@ class TeacherCertServiceTest {
     @Test
     @DisplayName("교사 로그인")
     void loginTeacher() {
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setUsername(testTeacherDataSet().getUsername());
-        loginDTO.setPassword(testTeacherDataSet().getPassword());
+        LoginRequest loginDTO = new LoginRequest(testTeacherDataSet().username(), testTeacherDataSet().password());
 
         //when
         UserDetails userDetails = userDetailsService
-                .loadUserByUsername(loginDTO.getUsername());
+                .loadUserByUsername(loginDTO.username());
 
         //then
         boolean matches = passwordEncoder
-                .matches(loginDTO.getPassword(), userDetails.getPassword());
-        assertEquals(testTeacherDataSet().getUsername(), userDetails.getUsername());
+                .matches(loginDTO.password(), userDetails.getPassword());
+        assertEquals(testTeacherDataSet().username(), userDetails.getUsername());
         assertTrue(matches);
     }
 
@@ -78,7 +78,7 @@ class TeacherCertServiceTest {
     @DisplayName("ID 중복 확인")
     void idConfirmation(){
         boolean existedByUsername = teacherJpaRepository
-                .existsByUsername(testTeacherDataSet().getUsername());
+                .existsByUsername(testTeacherDataSet().username());
         assertTrue(existedByUsername);
     }
 
@@ -86,28 +86,24 @@ class TeacherCertServiceTest {
     @DisplayName("Email 중복 확인")
     void emailConfirmation(){
         boolean existedByUsername = teacherJpaRepository
-                .existsByEmail(testTeacherDataSet().getEmail());
+                .existsByEmail(testTeacherDataSet().email());
         assertTrue(existedByUsername);
     }
 
     @Test
     @DisplayName("아이디로 이메일 정보 찾기")
     void findTeacherEmailByID() {
-        EmailDTO emailDTO = new EmailDTO();
-        emailDTO.setUsername(testTeacherDataSet().getUsername());
+        EmailResponse emailDTO = new EmailResponse(testTeacherDataSet().username(), "");
 
         Teacher teacherEntity = teacherJpaRepository
-                .findByUsernameIs(emailDTO.getUsername());
+                .findByUsernameIs(emailDTO.username());
 
-        EmailDTO build = EmailDTO.builder()
-                .username(teacherEntity.getUsername())
-                .email(teacherEntity.getEmail())
-                .build();
+        EmailResponse build = new EmailResponse(teacherEntity.getUsername(), teacherEntity.getEmail());
 
-        List<EmailDTO> emailDTOS = Collections.singletonList(build);
+        List<EmailResponse> emailDTOS = Collections.singletonList(build);
 
-        assertEquals(testTeacherDataSet().getUsername(), emailDTOS.get(0).getUsername());
-        assertEquals(testTeacherDataSet().getEmail(), emailDTOS.get(0).getEmail());
+        assertEquals(testTeacherDataSet().username(), emailDTOS.get(0).username());
+        assertEquals(testTeacherDataSet().email(), emailDTOS.get(0).email());
 
     }
 
@@ -116,26 +112,23 @@ class TeacherCertServiceTest {
     void pwdEdit() {
 
         //비밀번호 변경
-        PwdEditDTO pwdEditDTO = new PwdEditDTO();
-        pwdEditDTO.setUsername(testTeacherDataSet().getUsername());
-        pwdEditDTO.setPassword("root123!@#");
+        PwdEditRequest pwdEditDTO = new PwdEditRequest(testTeacherDataSet().username(), "root123!@#");
 
             //Given, 교사 로그인
-            LoginDTO loginDTO = new LoginDTO();
-            loginDTO.setUsername(testTeacherDataSet().getUsername());
+            LoginRequest loginDTO = new LoginRequest(testTeacherDataSet().username(), testTeacherDataSet().password());
 
             UserDetails userDetails = userDetailsService
-                    .loadUserByUsername(loginDTO.getUsername());
+                    .loadUserByUsername(loginDTO.username());
 
             UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(testTeacherDataSet().getUsername(),
-                            testTeacherDataSet().getPassword() , userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(testTeacherDataSet().username(),
+                            testTeacherDataSet().password() , userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
 
         //when
         teacherCertService.initializePassword(pwdEditDTO);
         Teacher byUsernameIs = teacherJpaRepository
-                .findByUsernameIs(pwdEditDTO.getUsername());
+                .findByUsernameIs(pwdEditDTO.username());
 
         //then
         //비밀번호 검증

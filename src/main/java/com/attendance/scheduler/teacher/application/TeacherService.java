@@ -2,11 +2,12 @@ package com.attendance.scheduler.teacher.application;
 
 import com.attendance.scheduler.course.repository.ClassJpaRepository;
 import com.attendance.scheduler.student.domain.Student;
-import com.attendance.scheduler.student.dto.StudentInformationDTO;
+import com.attendance.scheduler.student.dto.StudentInformationRequest;
+import com.attendance.scheduler.student.dto.StudentInformationResponse;
 import com.attendance.scheduler.student.repository.StudentJpaRepository;
 import com.attendance.scheduler.student.repository.StudentRepository;
-import com.attendance.scheduler.teacher.dto.JoinTeacherDTO;
-import com.attendance.scheduler.teacher.dto.RegisterStudentDTO;
+import com.attendance.scheduler.teacher.dto.JoinTeacherRequest;
+import com.attendance.scheduler.teacher.dto.RegisterStudentRequest;
 import com.attendance.scheduler.teacher.dto.StudentSearchCondition;
 import com.attendance.scheduler.teacher.repository.TeacherJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,37 +32,37 @@ public class TeacherService {
     private final PasswordEncoder teacherPasswordEncoder;
 
     @Transactional
-    public void joinTeacher(JoinTeacherDTO joinTeacherDTO) {
-        final String encode = teacherPasswordEncoder.encode(joinTeacherDTO.getPassword());
-        joinTeacherDTO.setPassword(encode);
+    public void joinTeacher(JoinTeacherRequest joinTeacherDTO) {
+        final String encode = teacherPasswordEncoder.encode(joinTeacherDTO.password());
+        joinTeacherDTO = joinTeacherDTO.withPassword(encode);
         teacherJpaRepository.save(joinTeacherDTO.toEntity());
     }
 
-    public boolean findDuplicateTeacherID(JoinTeacherDTO joinTeacherDTO) {
-        return teacherJpaRepository.existsByUsername(joinTeacherDTO.getUsername());
+    public boolean findDuplicateTeacherID(JoinTeacherRequest joinTeacherDTO) {
+        return teacherJpaRepository.existsByUsername(joinTeacherDTO.username());
     }
 
-    public boolean findDuplicateTeacherEmail(JoinTeacherDTO joinTeacherDTO) {
-        return teacherJpaRepository.existsByEmail(joinTeacherDTO.getEmail());
+    public boolean findDuplicateTeacherEmail(JoinTeacherRequest joinTeacherDTO) {
+        return teacherJpaRepository.existsByEmail(joinTeacherDTO.email());
     }
 
     @Transactional
-    public void registerStudentInformation(RegisterStudentDTO registerStudentDTO) {
+    public void registerStudentInformation(RegisterStudentRequest registerStudentDTO) {
         Student studentEntity = registerStudentDTO.toEntity();
-        studentEntity.setTeacherEntity(teacherJpaRepository.findByUsernameIs(registerStudentDTO.getTeacherUsername()));
+        studentEntity.setTeacherEntity(teacherJpaRepository.findByUsernameIs(registerStudentDTO.teacherUsername()));
         studentJpaRepository.save(studentEntity);
     }
 
     @Transactional
-    public void deleteStudentInformation(StudentInformationDTO studentInformationDTO) {
-        Optional<Student> studentEntityById = Optional.ofNullable(studentJpaRepository.findStudentEntityById(studentInformationDTO.getId()));
-        //cascade
+    public void deleteStudentInformation(StudentInformationRequest studentInformationRequest) {
+        Optional<Student> studentEntityById = Optional.ofNullable(
+                studentJpaRepository.findStudentEntityById(studentInformationRequest.id()));
         studentEntityById.ifPresent(studentEntity -> classJpaRepository.deleteById(studentEntity.getId()));
-        studentJpaRepository.deleteStudentEntityById(studentInformationDTO.getId());
+        studentJpaRepository.deleteStudentEntityById(studentInformationRequest.id());
     }
 
     @Transactional
-    public Page<StudentInformationDTO> findStudentInformationList(StudentSearchCondition studentSearchCondition, Pageable pageable) {
+    public Page<StudentInformationResponse> findStudentInformationList(StudentSearchCondition studentSearchCondition, Pageable pageable) {
         return studentRepository.studentInformationDTOList(studentSearchCondition, pageable);
     }
 }

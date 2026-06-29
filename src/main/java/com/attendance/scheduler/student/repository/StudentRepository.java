@@ -1,8 +1,8 @@
 package com.attendance.scheduler.student.repository;
 
-import com.attendance.scheduler.comment.dto.CommentDTO;
+import com.attendance.scheduler.comment.dto.CommentRequest;
 import com.attendance.scheduler.student.domain.Student;
-import com.attendance.scheduler.student.dto.StudentInformationDTO;
+import com.attendance.scheduler.student.dto.StudentInformationResponse;
 import com.attendance.scheduler.teacher.dto.StudentSearchCondition;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -28,23 +28,24 @@ public class StudentRepository {
 
     public final JPAQueryFactory queryFactory;
 
-    public Page<StudentInformationDTO> studentInformationDTOList(StudentSearchCondition studentSearchCondition, Pageable pageable){
-        List<StudentInformationDTO> studentInformationList = queryFactory
-                .select(Projections.fields(StudentInformationDTO.class,
+    public Page<StudentInformationResponse> studentInformationDTOList(StudentSearchCondition studentSearchCondition, Pageable pageable) {
+        // Constructor order: id, studentName, studentPhoneNumber, studentAddress, studentDetailedAddress, studentParentPhoneNumber, teacherName, createdDate
+        List<StudentInformationResponse> studentInformationList = queryFactory
+                .select(Projections.constructor(StudentInformationResponse.class,
                         student.id,
                         student.studentName,
+                        student.studentPhoneNumber,
                         student.studentAddress,
                         student.studentDetailedAddress,
-                        student.studentPhoneNumber,
                         student.studentParentPhoneNumber,
                         teacher.teacherName,
-                        student.creationTimestamp))
+                        student.createdDate))
                 .from(student)
                 .join(teacher)
                 .on(student.teacherEntity.eq(teacher))
                 .where(
-                        studentNameEq(studentSearchCondition.getStudentName()),
-                        teacherNameEq(studentSearchCondition.getTeacherName())
+                        studentNameEq(studentSearchCondition.studentName()),
+                        teacherNameEq(studentSearchCondition.teacherName())
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -56,8 +57,8 @@ public class StudentRepository {
                 .select(student.count())
                 .from(student)
                 .where(
-                        studentNameEq(studentSearchCondition.getStudentName()),
-                        teacherNameEq(studentSearchCondition.getTeacherName())
+                        studentNameEq(studentSearchCondition.studentName()),
+                        teacherNameEq(studentSearchCondition.teacherName())
                 );
 
         return PageableExecutionUtils.getPage(studentInformationList, pageable, counts::fetchOne);
@@ -78,15 +79,12 @@ public class StudentRepository {
                 .fetchOne());
     }
 
-
-
-
-    public boolean existStudentEntityByStudentNameAndStudentParentPhoneNumber(CommentDTO commentDTO) {
+    public boolean existStudentEntityByStudentNameAndStudentParentPhoneNumber(CommentRequest commentRequest) {
         Integer fetchOne = queryFactory.selectOne()
                 .from(student)
-                .where(student.studentName.eq(commentDTO.getCommentAuthor()),
-                        student.studentParentPhoneNumber.eq(commentDTO.getPassword()))
+                .where(student.studentName.eq(commentRequest.commentAuthor()),
+                        student.studentParentPhoneNumber.eq(commentRequest.password()))
                 .fetchOne();
-        return fetchOne!=null;
+        return fetchOne != null;
     }
 }

@@ -1,12 +1,13 @@
 package com.attendance.scheduler.course.application;
 
 import com.attendance.scheduler.course.domain.Course;
-import com.attendance.scheduler.course.dto.ClassDTO;
-import com.attendance.scheduler.course.dto.StudentClassDTO;
+import com.attendance.scheduler.course.dto.ClassRequest;
+import com.attendance.scheduler.course.dto.ClassResponse;
+import com.attendance.scheduler.course.dto.StudentClassResponse;
 import com.attendance.scheduler.course.repository.ClassJpaRepository;
 import com.attendance.scheduler.course.repository.ClassRepository;
 import com.attendance.scheduler.student.domain.Student;
-import com.attendance.scheduler.student.dto.ClassListDTO;
+import com.attendance.scheduler.student.dto.ClassListResponse;
 import com.attendance.scheduler.student.repository.StudentJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -28,79 +29,79 @@ public class ClassService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public List<ClassDTO> findStudentClassList() {
+    public List<ClassResponse> findStudentClassList() {
         return classRepository.getStudentClassList();
     }
 
     @Transactional
-    public ClassListDTO findTeachersClasses(String studentName) {
+    public ClassListResponse findTeachersClasses(String studentName) {
 
-        //학생 이름으로
         Student studentEntity
                 = studentJpaRepository.findStudentEntityByStudentName(studentName);
 
-        List<StudentClassDTO> studentClassByTeacherName
+        List<StudentClassResponse> studentClassByTeacherName
                 = classRepository.getStudentClassByTeacherEntity(studentEntity.getTeacherEntity());
 
-        ClassListDTO classListDTO = ClassListDTO.getInstance();
+        ClassListResponse classListDTO = ClassListResponse.getInstance();
 
-        classListDTO.setStudentName(studentName);
-        for (StudentClassDTO classDTO : studentClassByTeacherName) {
-            classListDTO.getMondayClassList().add(classDTO.getMonday());
-            classListDTO.getTuesdayClassList().add(classDTO.getTuesday());
-            classListDTO.getWednesdayClassList().add(classDTO.getWednesday());
-            classListDTO.getThursdayClassList().add(classDTO.getThursday());
-            classListDTO.getFridayClassList().add(classDTO.getFriday());
+        classListDTO = classListDTO.withStudentName(studentName);
+        for (StudentClassResponse classDTO : studentClassByTeacherName) {
+            classListDTO.mondayClassList().add(classDTO.monday());
+            classListDTO.tuesdayClassList().add(classDTO.tuesday());
+            classListDTO.wednesdayClassList().add(classDTO.wednesday());
+            classListDTO.thursdayClassList().add(classDTO.thursday());
+            classListDTO.fridayClassList().add(classDTO.friday());
         }
         return classListDTO;
     }
 
-    public Optional<StudentClassDTO> findStudentClasses(String studentName) {
+    public Optional<StudentClassResponse> findStudentClasses(String studentName) {
         return Optional.ofNullable(classRepository.getStudentClassByStudentName(studentName));
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void saveClassTable(ClassDTO classDTO)  {
+    public void saveClassTable(ClassRequest classRequest) {
 
-        classValidator(classDTO);
+        duplicateClassValidator(classRequest);
 
-        Student studentEntity = studentJpaRepository.findStudentEntityByStudentName(classDTO.getStudentName());
+        Student studentEntity = studentJpaRepository.findStudentEntityByStudentName(classRequest.studentName());
 
-        Course classEntity = classDTO.toEntity();
+        // Course는 @MapsId로 학생과 PK를 공유(학생당 수업 1개)하므로, 삭제 후 재삽입이 아니라
+        // 기존 수업이 있으면 제자리에서 갱신(upsert)한다. 그래야 공유 PK 충돌이 발생하지 않는다.
+        Course classEntity = classRepository
+                .getStudentClassEntityByStudentName(classRequest.studentName())
+                .orElseGet(() -> {
+                    Course newCourse = classRequest.toEntity();
+                    newCourse.setStudentEntity(studentEntity);
+                    return newCourse;
+                });
+
         classEntity.setTeacherEntity(studentEntity.getTeacherEntity());
-        classEntity.setStudentEntity(studentEntity);
+        classEntity.updateSchedule(classRequest.monday(), classRequest.tuesday(),
+                classRequest.wednesday(), classRequest.thursday(), classRequest.friday());
         classJpaRepository.save(classEntity);
-
-//        eventPublisher.publishEvent(new CourseEvent(classEntity.getTeacherEntity(), classDTO.getStudentName()+ "의 수업 등록(혹은 변경)이 있습니다."));
     }
 
-    private void classValidator(ClassDTO classDTO) {
-        Optional<Student> studentEntityByStudentName = Optional.ofNullable(studentJpaRepository.findStudentEntityByStudentName(classDTO.getStudentName()));
+    private void duplicateClassValidator(ClassRequest classRequest) {
 
-        if (studentEntityByStudentName.isEmpty()) {
-            duplicateClassValidator(classDTO);
-        } else {
-            classJpaRepository.deleteById(studentEntityByStudentName.get().getId());
-            duplicateClassValidator(classDTO);
-        }
-    }
+        List<ClassResponse> allClassDTO = classRepository.getStudentClassList();
 
-    private void duplicateClassValidator(ClassDTO classDTO) {
+        for (ClassResponse classDTOList : allClassDTO) {
+            // 본인의 기존 수업은 충돌 대상에서 제외(수업 변경 시 자기 자신과 겹치는 것을 방지)
+            if (classDTOList.studentName().equals(classRequest.studentName())) {
+                continue;
+            }
+            Integer mondayValue = classDTOList.monday();
+            Integer tuesdayValue = classDTOList.tuesday();
+            Integer wednesdayValue = classDTOList.wednesday();
+            Integer thursdayValue = classDTOList.thursday();
+            Integer fridayValue = classDTOList.friday();
 
-        List<ClassDTO> allClassDTO = classRepository.getStudentClassList();
-
-        for (ClassDTO classDTOList: allClassDTO) {
-            Integer mondayValue = classDTOList.getMonday();
-            Integer tuesdayValue = classDTOList.getTuesday();
-            Integer wednesdayValue = classDTOList.getWednesday();
-            Integer thursdayValue = classDTOList.getThursday();
-            Integer fridayValue = classDTOList.getFriday();
-
-            if (mondayValue.equals(classDTO.getMonday())) throw new IllegalStateException("월요일 수업 중에 겹치는 날이 있습니다.");
-            if (tuesdayValue.equals(classDTO.getTuesday())) throw new IllegalStateException("화요일 수업 중에 겹치는 날이 있습니다.");
-            if (wednesdayValue.equals(classDTO.getWednesday())) throw new IllegalStateException("수요일 수업 중에 겹치는 날이 있습니다.");
-            if (thursdayValue.equals(classDTO.getThursday())) throw new IllegalStateException("목요일 수업 중에 겹치는 날이 있습니다.");
-            if (fridayValue.equals(classDTO.getFriday())) throw new IllegalStateException("금요일 수업 중에 겹치는 날이 있습니다.");
+            if (mondayValue.equals(classRequest.monday())) throw new IllegalStateException("월요일 수업 중에 겹치는 날이 있습니다.");
+            if (tuesdayValue.equals(classRequest.tuesday())) throw new IllegalStateException("화요일 수업 중에 겹치는 날이 있습니다.");
+            if (wednesdayValue.equals(classRequest.wednesday())) throw new IllegalStateException("수요일 수업 중에 겹치는 날이 있습니다.");
+            if (thursdayValue.equals(classRequest.thursday())) throw new IllegalStateException("목요일 수업 중에 겹치는 날이 있습니다.");
+            if (fridayValue.equals(classRequest.friday())) throw new IllegalStateException("금요일 수업 중에 겹치는 날이 있습니다.");
         }
     }
 

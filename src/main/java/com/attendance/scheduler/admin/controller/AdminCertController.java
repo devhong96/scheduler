@@ -2,11 +2,9 @@ package com.attendance.scheduler.admin.controller;
 
 import com.attendance.scheduler.admin.application.AdminCertService;
 import com.attendance.scheduler.admin.application.AdminService;
-import com.attendance.scheduler.admin.dto.EditEmailDTO;
-import com.attendance.scheduler.admin.dto.EmailDTO;
-import com.attendance.scheduler.course.dto.ClassDTO;
-import com.attendance.scheduler.infra.email.HtmlEmailService;
-import com.attendance.scheduler.teacher.dto.PwdEditDTO;
+import com.attendance.scheduler.admin.dto.EditEmailRequest;
+import com.attendance.scheduler.admin.dto.EmailResponse;
+import com.attendance.scheduler.teacher.dto.PwdEditRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -26,66 +25,44 @@ public class AdminCertController {
 
     public final AdminService adminService;
     public final AdminCertService adminCertService;
-    public final HtmlEmailService htmlEmailService;
 
-    /*
-     * Find Password Section
-     */
     @GetMapping("password")
-    public String changePassword(Model model){
-        try {
-            model.addAttribute("pwdEdit", new PwdEditDTO());
-            return "admin/help/changePassword";
-        } catch (Exception e) {
-            log.info("send Id error = {}", e.getMessage());
-            model.addAttribute("class", new ClassDTO());
-            return "redirect:/";
-        }
+    public String changePassword(@ModelAttribute("pwdEdit") PwdEditRequest pwdEditDTO) {
+        return "admin/help/changePassword";
     }
 
-    // 인증 완료 후
     @PostMapping("password")
-    public String authCompletion(@Valid PwdEditDTO pwdEditDTO, Model model) {
+    public String authCompletion(@Valid PwdEditRequest pwdEditDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        pwdEditDTO.setUsername(auth.getName());
+        pwdEditDTO = pwdEditDTO.withUsername(auth.getName());
         try {
             adminCertService.initializePassword(pwdEditDTO);
             return "redirect:/help/completion";
-        }catch (Exception e) {
-            model.addAttribute("class", new ClassDTO());
+        } catch (Exception e) {
             return "redirect:/";
         }
     }
 
     @GetMapping("email")
-    public String changeEmail(Model model){
+    public String changeEmail(@ModelAttribute("emailEdit") EditEmailRequest editEmailDTO, Model model) {
 
-        EmailDTO emailDTO = new EmailDTO();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        emailDTO.setUsername(auth.getName());
+        EmailResponse emailDTO = new EmailResponse(auth.getName(), "");
 
         if (adminService.findAdminEmailByID(emailDTO).isPresent()) {
-            // 관리자 계정 정보가 있을 경우, emailDTO 정보 추가
-            emailDTO.setEmail(adminService.findAdminEmailByID(emailDTO).get().getEmail());
+            emailDTO = emailDTO.withEmail(adminService.findAdminEmailByID(emailDTO).get().email());
         }
 
-        try {
-            model.addAttribute("emailEdit", new EditEmailDTO());
-            model.addAttribute("username", emailDTO);
-            return "admin/help/changeEmail";
-        } catch (Exception e) {
-            log.info("send Id error = {}", e.getMessage());
-            model.addAttribute("class", new ClassDTO());
-            return "redirect:/";
-        }
+        model.addAttribute("username", emailDTO);
+        return "admin/help/changeEmail";
     }
 
     @PostMapping("email")
-    public String updateEmail(EditEmailDTO editEmailDTO) {
-        try{
+    public String updateEmail(EditEmailRequest editEmailDTO) {
+        try {
             adminCertService.updateEmail(editEmailDTO);
             return "redirect:cert/completion";
-        }catch (Exception e){
+        } catch (Exception e) {
             return "manage/class";
         }
     }

@@ -1,24 +1,31 @@
 package com.attendance.scheduler.testDataSet;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.attendance.scheduler.course.application.ClassService;
-import com.attendance.scheduler.course.dto.ClassDTO;
+import com.attendance.scheduler.course.dto.ClassRequest;
 import com.attendance.scheduler.student.domain.Student;
-import com.attendance.scheduler.student.dto.StudentInformationDTO;
+import com.attendance.scheduler.student.dto.StudentInformationResponse;
 import com.attendance.scheduler.student.repository.StudentJpaRepository;
 import com.attendance.scheduler.teacher.application.TeacherService;
 import com.attendance.scheduler.teacher.domain.Teacher;
-import com.attendance.scheduler.teacher.dto.JoinTeacherDTO;
-import com.attendance.scheduler.teacher.dto.RegisterStudentDTO;
+import com.attendance.scheduler.teacher.dto.JoinTeacherRequest;
+import com.attendance.scheduler.teacher.dto.RegisterStudentRequest;
 import com.attendance.scheduler.teacher.repository.TeacherJpaRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.test.annotation.Rollback;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.Rollback;
 
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class SampleDataTest {
@@ -38,86 +45,78 @@ public class SampleDataTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public JoinTeacherDTO sampleTeacherDataSet(){
-        JoinTeacherDTO joinTeacherDTO = new JoinTeacherDTO();
-        joinTeacherDTO.setUsername("sampleTeacher");
-        joinTeacherDTO.setPassword("123");
-        joinTeacherDTO.setEmail("sampleTeacherDataSet@gmail.com");
-        joinTeacherDTO.setTeacherName("김교사");
-        joinTeacherDTO.setApproved(true);
-        return joinTeacherDTO;
+    public JoinTeacherRequest sampleTeacherDataSet(){
+        return new JoinTeacherRequest("sampleTeacher", "123", "김교사", "sampleTeacherDataSet@gmail.com", true);
     }
 
-    public JoinTeacherDTO sample2TeacherDataSet(){
-        JoinTeacherDTO joinTeacherDTO = new JoinTeacherDTO();
-        joinTeacherDTO.setUsername("sample2Teacher");
-        joinTeacherDTO.setPassword("123");
-        joinTeacherDTO.setEmail("sample2TeacherDataSet@gmail.com");
-        joinTeacherDTO.setTeacherName("박교사");
-        joinTeacherDTO.setApproved(true);
-        return joinTeacherDTO;
+    public JoinTeacherRequest sample2TeacherDataSet(){
+        return new JoinTeacherRequest("sample2Teacher", "123", "박교사", "sample2TeacherDataSet@gmail.com", true);
     }
 
-    public static StudentInformationDTO sampleStudentInformationDTO() {
-        StudentInformationDTO studentInformationDTO = new StudentInformationDTO();
-        studentInformationDTO.setStudentName("김샘플");
-        studentInformationDTO.setStudentPhoneNumber("010-1234-1234");
-        studentInformationDTO.setStudentParentPhoneNumber("010-1234-1233");
-        studentInformationDTO.setStudentAddress("대한민국 저기 어디");
-        studentInformationDTO.setStudentDetailedAddress("어디");
-        return studentInformationDTO;
+    public static StudentInformationResponse sampleStudentInformationDTO() {
+        return new StudentInformationResponse(0L, "김샘플", "010-1234-1234", "대한민국 저기 어디", "어디", "010-1234-1233", "", LocalDateTime.now());
     }
 
-    public ClassDTO sampleClass(){
-        ClassDTO classDTO = new ClassDTO();
-        classDTO.setStudentName("sampleStudent");
-        classDTO.setMonday(1);
-        classDTO.setTuesday(2);
-        classDTO.setWednesday(3);
-        classDTO.setThursday(4);
-        classDTO.setFriday(5);
-        return classDTO;
+    public ClassRequest sampleClass(){
+        return new ClassRequest("sampleStudent", 1, 2, 3, 4, 5);
     }
+
         @Test
         @DisplayName("샘플 교사 정보")
         void saveSampleTeacherDataSet(){
-            String encode = passwordEncoder.encode(sampleTeacherDataSet().getPassword());
-            sampleTeacherDataSet().setPassword(encode);
-            teacherService.joinTeacher(sampleTeacherDataSet());
+            String encode = passwordEncoder.encode(sampleTeacherDataSet().password());
+            teacherService.joinTeacher(sampleTeacherDataSet().withPassword(encode));
 
-            String encode2 = passwordEncoder.encode(sample2TeacherDataSet().getPassword());
-            sample2TeacherDataSet().setPassword(encode2);
-            teacherService.joinTeacher(sample2TeacherDataSet());
-
+            String encode2 = passwordEncoder.encode(sample2TeacherDataSet().password());
+            teacherService.joinTeacher(sample2TeacherDataSet().withPassword(encode2));
         }
 
     @Test
     @DisplayName("샘플 학생 정보")
     @Transactional
-    @Rollback(value = false)
     void addStudentDataSet(){
 
-        RegisterStudentDTO registerStudentDTO = new RegisterStudentDTO();
-        Teacher testTeacher = teacherJpaRepository.findByUsernameIs("sampleTeacher");
+        // 다른 테스트에 의존하지 않도록 교사를 자체 생성
+        Teacher testTeacher = ensureSampleTeacher();
+
         for (int i = 0; i < 4; i++) {
-            registerStudentDTO.setStudentName("김샘플"+i);
-            registerStudentDTO.setStudentPhoneNumber("010-1234-1234");
-            registerStudentDTO.setStudentParentPhoneNumber("010-1234-1233");
-            registerStudentDTO.setStudentAddress("대한민국 저기 어디");
-            registerStudentDTO.setStudentDetailedAddress("어디");
-            registerStudentDTO.setTeacherName(testTeacher.getTeacherName());
+            RegisterStudentRequest registerStudentDTO = new RegisterStudentRequest("김샘플" + i,
+                    "01012341234", "대한민국 저기 어디", "어디", "01012341233",
+                    testTeacher.getTeacherName(), testTeacher.getUsername());
             Student entity = registerStudentDTO.toEntity();
             entity.setTeacherEntity(testTeacher);
             studentJpaRepository.save(entity);
         }
+
+        assertNotNull(studentJpaRepository.findStudentEntityByStudentName("김샘플0"));
     }
 
 
         @Test
         @DisplayName("샘플 학생 수강 정보")
+        @Transactional
         void saveSampleStudent() throws InterruptedException {
+            // 교사와 학생을 자체 생성한 뒤 수강 정보 저장
+            Teacher sampleTeacher = ensureSampleTeacher();
+            RegisterStudentRequest student = new RegisterStudentRequest("sampleStudent",
+                    "01012341234", "대한민국 저기 어디", "어디", "01012341233",
+                    sampleTeacher.getTeacherName(), sampleTeacher.getUsername());
+            teacherService.registerStudentInformation(student);
+
             classService.saveClassTable(sampleClass());
+
+            assertTrue(classService.findStudentClasses("sampleStudent").isPresent());
         }
+
+    // sampleTeacher가 없으면 생성하고 엔티티를 반환한다.
+    private Teacher ensureSampleTeacher() {
+        JoinTeacherRequest teacher = sampleTeacherDataSet();
+        if (!teacherService.findDuplicateTeacherID(teacher)) {
+            teacherService.joinTeacher(
+                    teacher.withPassword(passwordEncoder.encode(teacher.password())));
+        }
+        return teacherJpaRepository.findByUsernameIs(teacher.username());
+    }
 
 
         @DisplayName("샘플 데이터 삭제")
