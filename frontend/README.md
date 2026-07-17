@@ -63,11 +63,13 @@ frontend/
    │  ├─ teacher.js    ← 수업/학생 관리 API 함수들
    │  ├─ class.js      ← 학생 수강신청 API 함수들
    │  ├─ board.js      ← 공지/댓글 API 함수들
-   │  └─ admin.js      ← 교사 승인/변경/삭제 API 함수들
+   │  ├─ admin.js      ← 교사 승인/변경/삭제 API 함수들
+   │  └─ notification.js ← 알림 조회/읽음 API 함수들
    ├─ auth/
    │  └─ AuthContext.jsx ← 로그인 상태를 앱 전체에서 공유 (누가 로그인했나)
    ├─ components/      ← 여러 페이지에서 재사용하는 조각
-   │  └─ ProtectedRoute.jsx ← 로그인 안 했으면 로그인 페이지로 보내는 "문지기"
+   │  ├─ ProtectedRoute.jsx  ← 로그인/권한 없으면 되돌려보내는 "문지기"
+   │  └─ NotificationBell.jsx ← 상단 알림 종(안 읽은 개수 배지 + 목록)
    └─ pages/           ← 화면(페이지) 단위 컴포넌트
       ├─ EnrollPage.jsx      ← 학생 수강신청 (공개, 랜딩 페이지 "/")
       ├─ LoginPage.jsx       ← 로그인 "/login"
@@ -210,6 +212,9 @@ proxy: { '/api': { target: 'http://localhost:3205' } }
 | `ManagePage.jsx` | `/manage` | 수업 시간표 조회/삭제 | 교사·관리자 |
 | `StudentListPage.jsx` | `/manage/students` | 학생 정보 검색/삭제, 담당교사 변경(관리자) | 교사·관리자 |
 | `AdminTeachersPage.jsx` | `/admin/teachers` | 교사 승인/승인취소/삭제 | 관리자 |
+
+> 알림은 별도 페이지가 아니라 수업관리 화면 상단의 종(`NotificationBell`)으로 표시됩니다.
+> 학생이 수업을 신청하면 담당 교사에게 알림이 쌓이고, 종에서 읽음 처리할 수 있습니다.
 
 ---
 

@@ -20,11 +20,13 @@ public class NotificationRepository {
     public List<NotificationResponse> findByTeacherEntityOrderByCreatedDesc(Teacher teacher) {
         return queryFactory
                 .select(Projections.constructor(NotificationResponse.class,
+                        notification.id,
                         notification.message,
                         notification.checked,
                         notification.createdDate))
                 .from(notification)
                 .where(notification.teacherEntity.eq(teacher))
+                .orderBy(notification.createdDate.desc())
                 .fetch();
     }
 }

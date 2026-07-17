@@ -4,6 +4,7 @@ import com.attendance.scheduler.course.domain.Course;
 import com.attendance.scheduler.course.dto.ClassRequest;
 import com.attendance.scheduler.course.dto.ClassResponse;
 import com.attendance.scheduler.course.dto.StudentClassResponse;
+import com.attendance.scheduler.course.event.CourseEvent;
 import com.attendance.scheduler.course.repository.ClassJpaRepository;
 import com.attendance.scheduler.course.repository.ClassRepository;
 import com.attendance.scheduler.student.domain.Student;
@@ -80,6 +81,11 @@ public class ClassService {
         classEntity.updateSchedule(classRequest.monday(), classRequest.tuesday(),
                 classRequest.wednesday(), classRequest.thursday(), classRequest.friday());
         classJpaRepository.save(classEntity);
+
+        // 담당 교사에게 수업 신청 알림 발행 (CourseEventListener 가 Notification 생성)
+        eventPublisher.publishEvent(new CourseEvent(
+                studentEntity.getTeacherEntity(),
+                classRequest.studentName() + " 학생이 수업을 신청했습니다."));
     }
 
     private void duplicateClassValidator(ClassRequest classRequest) {

@@ -34,4 +34,10 @@ public class NotificationService {
         notificationEntity.checked();
         notificationJpaRepository.save(notificationEntity);
     }
+
+    public void markAllAsRead(Teacher teacherEntity) {
+        List<Notification> notifications = notificationJpaRepository.findByTeacherEntity(teacherEntity);
+        notifications.forEach(Notification::checked);
+        notificationJpaRepository.saveAll(notifications);
+    }
 }

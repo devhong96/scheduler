@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { fetchClasses, deleteClass } from '../api/teacher'
+import NotificationBell from '../components/NotificationBell'
 
 const DAYS = [
   ['monday', '월'],
@@ -51,6 +52,7 @@ export default function ManagePage() {
       <header style={styles.header}>
         <h1 style={styles.title}>수업 관리</h1>
         <div style={styles.headerRight}>
+          <NotificationBell />
           <span style={styles.who}>
             {user?.username} ({user?.roles?.join(', ')})
           </span>
