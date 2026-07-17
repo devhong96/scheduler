@@ -144,7 +144,10 @@ export default function EnrollPage() {
         <button type="submit" style={styles.primary}>
           수업 조회
         </button>
-        <div style={styles.center}>
+        <div style={styles.linkRow}>
+          <Link to="/board" style={styles.link}>
+            공지사항
+          </Link>
           <Link to="/login" style={styles.link}>
             선생님/관리자 로그인
           </Link>
@@ -160,6 +163,7 @@ const styles = {
   title: { margin: 0, fontSize: 22, textAlign: 'center' },
   hint: { margin: 0, fontSize: 13, color: '#666', textAlign: 'center' },
   center: { textAlign: 'center', fontSize: 14 },
+  linkRow: { display: 'flex', justifyContent: 'center', gap: 16, fontSize: 14 },
   input: { padding: '10px 12px', fontSize: 15, border: '1px solid #ccc', borderRadius: 8 },
   dayBlock: { border: '1px solid #eee', borderRadius: 10, padding: 12 },
   dayLabel: { fontWeight: 600, marginBottom: 8 },

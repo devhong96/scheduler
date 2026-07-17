@@ -61,7 +61,8 @@ frontend/
    ├─ api/             ← 백엔드 API 호출 코드 모음
    │  ├─ client.js     ← axios 설정 (토큰 자동첨부, 401 자동 갱신) — 가장 중요
    │  ├─ teacher.js    ← 수업/학생 관리 API 함수들
-   │  └─ class.js      ← 학생 수강신청 API 함수들
+   │  ├─ class.js      ← 학생 수강신청 API 함수들
+   │  └─ board.js      ← 공지/댓글 API 함수들
    ├─ auth/
    │  └─ AuthContext.jsx ← 로그인 상태를 앱 전체에서 공유 (누가 로그인했나)
    ├─ components/      ← 여러 페이지에서 재사용하는 조각
@@ -69,6 +70,9 @@ frontend/
    └─ pages/           ← 화면(페이지) 단위 컴포넌트
       ├─ EnrollPage.jsx      ← 학생 수강신청 (공개, 랜딩 페이지 "/")
       ├─ LoginPage.jsx       ← 로그인 "/login"
+      ├─ BoardListPage.jsx   ← 공지 목록 "/board"
+      ├─ BoardDetailPage.jsx ← 공지 상세 + 댓글 "/board/:id"
+      ├─ BoardFormPage.jsx   ← 공지 작성/수정 "/board/new", "/board/:id/edit" (관리자)
       ├─ ManagePage.jsx      ← 수업 시간표 관리 "/manage" (교사/관리자)
       └─ StudentListPage.jsx ← 학생 정보 관리 "/manage/students"
 ```
@@ -198,6 +202,9 @@ proxy: { '/api': { target: 'http://localhost:3205' } }
 |---|---|---|---|
 | `EnrollPage.jsx` | `/` | 학생이 이름으로 조회 후 요일별 수업 신청 | 공개 |
 | `LoginPage.jsx` | `/login` | 아이디/비번으로 로그인 | 공개 |
+| `BoardListPage.jsx` | `/board` | 공지사항 목록/검색 | 공개 |
+| `BoardDetailPage.jsx` | `/board/:id` | 공지 상세 + 댓글(학생 인증) | 공개 |
+| `BoardFormPage.jsx` | `/board/new`, `/board/:id/edit` | 공지 작성/수정 | 관리자 |
 | `ManagePage.jsx` | `/manage` | 수업 시간표 조회/삭제 | 교사·관리자 |
 | `StudentListPage.jsx` | `/manage/students` | 학생 정보 검색/페이징/삭제 | 교사·관리자 |
 

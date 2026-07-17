@@ -5,6 +5,9 @@ import LoginPage from './pages/LoginPage'
 import ManagePage from './pages/ManagePage'
 import StudentListPage from './pages/StudentListPage'
 import EnrollPage from './pages/EnrollPage'
+import BoardListPage from './pages/BoardListPage'
+import BoardDetailPage from './pages/BoardDetailPage'
+import BoardFormPage from './pages/BoardFormPage'
 
 export default function App() {
   return (
@@ -14,6 +17,27 @@ export default function App() {
           {/* 공개: 학생 수강신청 (랜딩) */}
           <Route path="/" element={<EnrollPage />} />
           <Route path="/login" element={<LoginPage />} />
+
+          {/* 공개: 공지사항 목록/상세 */}
+          <Route path="/board" element={<BoardListPage />} />
+          <Route path="/board/:id" element={<BoardDetailPage />} />
+          {/* 관리자: 공지 작성/수정 */}
+          <Route
+            path="/board/new"
+            element={
+              <ProtectedRoute roles={['ROLE_ADMIN']}>
+                <BoardFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/board/:id/edit"
+            element={
+              <ProtectedRoute roles={['ROLE_ADMIN']}>
+                <BoardFormPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/manage"
             element={
