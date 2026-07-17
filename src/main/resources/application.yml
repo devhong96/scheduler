@@ -51,3 +51,13 @@ spring:
           starttls:
             enable: true
         protocol: smtp
+
+# JWT 설정 (운영 시 secret 은 환경변수로 주입 권장)
+jwt:
+  secret: ${JWT_SECRET:c2NoZWR1bGVyLXBvcnRmb2xpby1qd3Qtc2VjcmV0LWtleS1jaGFuZ2UtbWUtaW4tcHJvZHVjdGlvbi0zMjA1}
+  access-token-validity-seconds: 3600        # 1시간
+  refresh-token-validity-seconds: 1209600    # 14일
+
+# CORS 허용 오리진 (React dev 서버)
+cors:
+  allowed-origins: ${CORS_ORIGINS:http://localhost:5173}

@@ -1,0 +1,42 @@
+# 로컬 개발/검증용 — 인메모리 H2 (원격 DB 불필요)
+# 실행: ./gradlew bootRun --args='--spring.profiles.active=local'
+server:
+  port: 3205
+
+spring:
+  sql:
+    init:
+      mode: never
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:scheduler;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+
+  thymeleaf:
+    cache: false
+    enabled: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: dev.hsayho@gmail.com
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        protocol: smtp

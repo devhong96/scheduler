@@ -108,6 +108,13 @@ public class ClassService {
     @Transactional
     public void deleteClass(String studentName) {
         Student studentEntity = studentJpaRepository.findStudentEntityByStudentName(studentName);
-        classJpaRepository.deleteClassEntityByStudentEntity(studentEntity);
+        Course classEntity = studentEntity.getClassEntity();
+        if (classEntity == null) {
+            return;
+        }
+        // 양방향 연관(student.classEntity)을 먼저 끊어야 flush 시
+        // TransientPropertyValueException(삭제된 Course 를 여전히 참조) 를 피할 수 있다.
+        studentEntity.addClassEntity(null);
+        classJpaRepository.delete(classEntity);
     }
 }
