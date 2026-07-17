@@ -1,5 +1,6 @@
 package com.attendance.scheduler.infra.config.security;
 
+import com.attendance.scheduler.infra.config.security.jwt.JwtAccessDeniedHandler;
 import com.attendance.scheduler.infra.config.security.jwt.JwtAuthenticationEntryPoint;
 import com.attendance.scheduler.infra.config.security.jwt.JwtAuthenticationFilter;
 import com.attendance.scheduler.infra.config.security.jwt.JwtProvider;
@@ -47,6 +48,7 @@ public class SecurityConfig {
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
     private final JwtProvider jwtProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
@@ -82,7 +84,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/manage/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TEACHER")
                         .anyRequest().authenticated())
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
                         UsernamePasswordAuthenticationFilter.class);
 

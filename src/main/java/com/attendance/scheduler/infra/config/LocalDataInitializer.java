@@ -47,6 +47,15 @@ public class LocalDataInitializer implements ApplicationRunner {
                 .approved(true)
                 .build());
 
+        // 담당교사 변경/계정삭제 테스트용: 학생이 없는 두 번째 교사
+        teacherJpaRepository.save(Teacher.builder()
+                .username("teacher2")
+                .teacherName("박선생")
+                .password(passwordEncoder.encode("teacher123!"))
+                .email("teacher2@example.com")
+                .approved(true)
+                .build());
+
         Student minjun = newStudent("김민준", "01011112222", "서울시 강남구", "101동 1001호", "01099998888", teacher);
         Student seoyeon = newStudent("이서연", "01033334444", "서울시 서초구", "202동 2002호", "01077776666", teacher);
         studentJpaRepository.save(minjun);

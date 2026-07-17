@@ -49,9 +49,10 @@ public class Student extends BaseEntity {
     private Teacher teacherEntity;
 
     public void setTeacherEntity(Teacher teacherEntity) {
-        if (this.teacherEntity != null) {
-            this.teacherEntity.getStudentEntityList().remove(this);
-        }
+        // 이전 교사의 컬렉션에서 제거하지 않는다.
+        // Teacher.studentEntityList 에 orphanRemoval=true 가 걸려 있어, 컬렉션에서 제거하면
+        // 담당교사 변경(재배정) 시 학생이 고아로 간주되어 삭제되고 낙관적 락 충돌이 발생한다.
+        // 소유측 FK(Student.teacherEntity)만 갱신하면 재배정이 올바르게 반영된다.
         this.teacherEntity = teacherEntity;
         if(teacherEntity != null) {
             teacherEntity.setStudentEntity(this);

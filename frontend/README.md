@@ -62,7 +62,8 @@ frontend/
    │  ├─ client.js     ← axios 설정 (토큰 자동첨부, 401 자동 갱신) — 가장 중요
    │  ├─ teacher.js    ← 수업/학생 관리 API 함수들
    │  ├─ class.js      ← 학생 수강신청 API 함수들
-   │  └─ board.js      ← 공지/댓글 API 함수들
+   │  ├─ board.js      ← 공지/댓글 API 함수들
+   │  └─ admin.js      ← 교사 승인/변경/삭제 API 함수들
    ├─ auth/
    │  └─ AuthContext.jsx ← 로그인 상태를 앱 전체에서 공유 (누가 로그인했나)
    ├─ components/      ← 여러 페이지에서 재사용하는 조각
@@ -74,7 +75,8 @@ frontend/
       ├─ BoardDetailPage.jsx ← 공지 상세 + 댓글 "/board/:id"
       ├─ BoardFormPage.jsx   ← 공지 작성/수정 "/board/new", "/board/:id/edit" (관리자)
       ├─ ManagePage.jsx      ← 수업 시간표 관리 "/manage" (교사/관리자)
-      └─ StudentListPage.jsx ← 학생 정보 관리 "/manage/students"
+      ├─ StudentListPage.jsx ← 학생 정보 관리 "/manage/students" (관리자는 담당교사 변경)
+      └─ AdminTeachersPage.jsx ← 교사 승인/삭제 "/admin/teachers" (관리자)
 ```
 
 **폴더를 왜 이렇게 나눴나?** — 역할별로 모아두면 찾기 쉽고 재사용이 됩니다.
@@ -206,7 +208,8 @@ proxy: { '/api': { target: 'http://localhost:3205' } }
 | `BoardDetailPage.jsx` | `/board/:id` | 공지 상세 + 댓글(학생 인증) | 공개 |
 | `BoardFormPage.jsx` | `/board/new`, `/board/:id/edit` | 공지 작성/수정 | 관리자 |
 | `ManagePage.jsx` | `/manage` | 수업 시간표 조회/삭제 | 교사·관리자 |
-| `StudentListPage.jsx` | `/manage/students` | 학생 정보 검색/페이징/삭제 | 교사·관리자 |
+| `StudentListPage.jsx` | `/manage/students` | 학생 정보 검색/삭제, 담당교사 변경(관리자) | 교사·관리자 |
+| `AdminTeachersPage.jsx` | `/admin/teachers` | 교사 승인/승인취소/삭제 | 관리자 |
 
 ---
 

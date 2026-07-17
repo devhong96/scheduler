@@ -57,6 +57,11 @@ export default function ManagePage() {
           <Link to="/manage/students" style={styles.link}>
             학생 관리
           </Link>
+          {user?.roles?.includes('ROLE_ADMIN') && (
+            <Link to="/admin/teachers" style={styles.link}>
+              교사 관리
+            </Link>
+          )}
           <button onClick={onLogout} style={styles.ghostBtn}>
             로그아웃
           </button>

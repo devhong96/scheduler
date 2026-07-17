@@ -93,22 +93,23 @@ public class AdminService {
     private void classValidator(StudentClassResponse studentClassByStudentName, List<StudentClassResponse> studentClassByTeacherEntity) {
 
         for (StudentClassResponse classDTOList : studentClassByTeacherEntity) {
-            Integer mondayValue = classDTOList.monday();
-            Integer tuesdayValue = classDTOList.tuesday();
-            Integer wednesdayValue = classDTOList.wednesday();
-            Integer thursdayValue = classDTOList.thursday();
-            Integer fridayValue = classDTOList.friday();
-            if (mondayValue.equals(studentClassByStudentName.monday()))
+            // 0(등원 안 함)은 실제 수업이 아니므로 겹침 검사에서 제외한다.
+            if (collides(classDTOList.monday(), studentClassByStudentName.monday()))
                 throw new IllegalStateException("학생의 월요일 수업 중에 겹치는 날이 있습니다.");
-            if (tuesdayValue.equals(studentClassByStudentName.tuesday()))
+            if (collides(classDTOList.tuesday(), studentClassByStudentName.tuesday()))
                 throw new IllegalStateException("학생의 화요일 수업 중에 겹치는 날이 있습니다.");
-            if (wednesdayValue.equals(studentClassByStudentName.wednesday()))
+            if (collides(classDTOList.wednesday(), studentClassByStudentName.wednesday()))
                 throw new IllegalStateException("학생의 수요일 수업 중에 겹치는 날이 있습니다.");
-            if (thursdayValue.equals(studentClassByStudentName.thursday()))
+            if (collides(classDTOList.thursday(), studentClassByStudentName.thursday()))
                 throw new IllegalStateException("학생의 목요일 수업 중에 겹치는 날이 있습니다.");
-            if (fridayValue.equals(studentClassByStudentName.friday()))
+            if (collides(classDTOList.friday(), studentClassByStudentName.friday()))
                 throw new IllegalStateException("학생의 요일 수업 중에 겹치는 날이 있습니다.");
         }
+    }
+
+    // 같은 교시를 신청했는지 판단. 0(등원 안 함)/null 은 수업이 아니므로 충돌로 보지 않는다.
+    private boolean collides(Integer existing, Integer target) {
+        return existing != null && existing != 0 && existing.equals(target);
     }
 
     @Transactional

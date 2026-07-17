@@ -8,6 +8,7 @@ import EnrollPage from './pages/EnrollPage'
 import BoardListPage from './pages/BoardListPage'
 import BoardDetailPage from './pages/BoardDetailPage'
 import BoardFormPage from './pages/BoardFormPage'
+import AdminTeachersPage from './pages/AdminTeachersPage'
 
 export default function App() {
   return (
@@ -51,6 +52,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <StudentListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/teachers"
+            element={
+              <ProtectedRoute roles={['ROLE_ADMIN']}>
+                <AdminTeachersPage />
               </ProtectedRoute>
             }
           />

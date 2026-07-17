@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchStudents, deleteStudent } from '../api/teacher'
+import { changeTeacher } from '../api/admin'
+import { useAuth } from '../auth/AuthContext'
 
 export default function StudentListPage() {
+  const { user } = useAuth()
+  const isAdmin = user?.roles?.includes('ROLE_ADMIN')
   const [data, setData] = useState(null)
   const [page, setPage] = useState(0)
   const [search, setSearch] = useState('')
@@ -32,6 +36,17 @@ export default function StudentListPage() {
       load()
     } catch {
       alert('삭제에 실패했습니다.')
+    }
+  }
+
+  // 관리자: 담당교사 변경
+  const onChangeTeacher = async (studentId, teacherId) => {
+    try {
+      await changeTeacher(Number(teacherId), studentId)
+      load()
+    } catch (err) {
+      alert(err.response?.data?.message ?? '변경에 실패했습니다.')
+      load()
     }
   }
 
@@ -87,7 +102,23 @@ export default function StudentListPage() {
                     <td style={styles.td}>
                       {s.studentAddress} {s.studentDetailedAddress}
                     </td>
-                    <td style={styles.td}>{s.teacherName}</td>
+                    <td style={styles.td}>
+                      {isAdmin && data.teachers?.length ? (
+                        <select
+                          style={styles.select}
+                          value={data.teachers.find((t) => t.teacherName === s.teacherName)?.id ?? ''}
+                          onChange={(e) => onChangeTeacher(s.id, e.target.value)}
+                        >
+                          {data.teachers.map((t) => (
+                            <option key={t.id} value={t.id}>
+                              {t.teacherName}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        s.teacherName
+                      )}
+                    </td>
                     <td style={styles.td}>
                       <button
                         onClick={() => onDelete(s.id, s.studentName)}
@@ -135,6 +166,7 @@ const styles = {
   th: { borderBottom: '2px solid #ddd', padding: '10px 8px', textAlign: 'left', fontSize: 14 },
   td: { borderBottom: '1px solid #eee', padding: '10px 8px', fontSize: 14 },
   dangerBtn: { padding: '4px 10px', border: 'none', borderRadius: 6, background: '#dc2626', color: '#fff', cursor: 'pointer' },
+  select: { padding: '4px 8px', border: '1px solid #ccc', borderRadius: 6 },
   pager: { display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center', marginTop: 20 },
   pageInfo: { fontSize: 14 },
   error: { color: '#dc2626' },
