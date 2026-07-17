@@ -10,16 +10,17 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-@Profile("test")
+@Profile({"test", "local"})
 public class ConsoleEmailService implements EmailService {
 
     @Override
     public void sendUserId(FindIdResponse findIdResponse) {
-        log.info("[console] sendUserId to {}", findIdResponse.email());
+        // 로컬/테스트 편의를 위해 실제 값도 로그로 남긴다 (실제 메일 발송 없음)
+        log.info("[console] sendUserId to {} → username={}", findIdResponse.email(), findIdResponse.username());
     }
 
     @Override
     public void sendAuthCode(String email, String authCode) {
-        log.info("[console] sendAuthCode to {}", email);
+        log.info("[console] sendAuthCode to {} → code={}", email, authCode);
     }
 }

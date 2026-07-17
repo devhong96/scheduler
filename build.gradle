@@ -53,14 +53,8 @@ dependencies {
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
-	//Web
+	//Web (순수 REST — Thymeleaf/세션 제거)
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-web-services'
-	// 스타터가 thymeleaf-spring6 + Boot의 ThymeleafViewResolver 오토컨피그를 등록 (없으면 뷰가 forward로 빠져 circular view path 발생)
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation 'org.springframework.session:spring-session-core'
 
 	//Add-ons
 	implementation 'org.springframework.boot:spring-boot-starter-security'

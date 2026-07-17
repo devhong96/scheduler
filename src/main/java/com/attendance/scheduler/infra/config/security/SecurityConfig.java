@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,26 +24,28 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 순수 REST(stateless) 보안 설정. 모든 요청은 /api 로 들어오는 JSON API 이며,
+ * 인증은 JWT 로만 처리한다. (기존 세션/폼 로그인/Thymeleaf 체인은 제거됨)
+ */
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // 기존 Thymeleaf(세션) 화이트리스트 — 도메인 이관이 끝나면 축소/제거
-    public static final String[] ENDPOINTS_WHITELIST = {
-            "/", "/submit", "/completion",
-            "/class/**",
-            "/board/**",
-            "/join/**",
-            "/cert/**",
-            "/login/**",
-            "/help/**",
-            "/comment/**",
-            "/css/**",
-            "/js/**"
+    // 인증 없이 접근 가능한 공개 엔드포인트
+    private static final String[] PUBLIC_ENDPOINTS = {
+            "/api/auth/login",
+            "/api/auth/refresh",
+            "/api/auth/join",
+            "/api/auth/find-id",
+            "/api/auth/find-password",
+            "/api/auth/verify-code",
+            "/api/auth/reset-password",
+            "/api/class/**",
+            "/api/comment/**",
     };
 
-    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
     private final JwtProvider jwtProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
@@ -63,23 +63,16 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-    /**
-     * REST API 체인 — stateless + JWT. React SPA 가 사용.
-     */
     @Bean
-    @Order(1)
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .securityMatcher("/api/**")
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/refresh").permitAll()
-                        .requestMatchers("/api/class/**").permitAll()
-                        .requestMatchers("/api/comment/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/board/**").permitAll()
+                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/board/**").permitAll()
                         .requestMatchers("/api/board/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/manage/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TEACHER")
@@ -93,45 +86,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /**
-     * 기존 웹(Thymeleaf) 체인 — 세션 + 폼 로그인. 도메인 이관이 끝나면 제거 예정.
-     */
-    @Bean
-    public SecurityFilterChain webFilterChain(HttpSecurity httpSecurity) throws Exception {
-
-        httpSecurity
-                .securityMatcher("/**")
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(ENDPOINTS_WHITELIST).permitAll()
-                        .requestMatchers("/admin/**")
-                        .hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/manage/*")
-                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_TEACHER")
-                        .anyRequest().authenticated())
-
-                .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
-                        .defaultSuccessUrl("/manage/class", true)
-                        .failureHandler(customAuthenticationFailureHandler)
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .permitAll()
-                )
-
-                .logout(httpSecurityFormLogoutConfigurer -> httpSecurityFormLogoutConfigurer
-                        .logoutUrl("/logout")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .logoutSuccessUrl("/"))
-
-                .sessionManagement(sessionManagement -> sessionManagement
-                        .invalidSessionUrl("/login")
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(true)
-                        .expiredUrl("/login"));
-
-        return httpSecurity.build();
-    }
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -142,7 +96,7 @@ public class SecurityConfig {
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }

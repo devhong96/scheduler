@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * 실제 SMTP로 메일을 발송하는 구현체. test 프로파일 외(운영/로컬)에서 활성화된다.
  */
 @Service
-@Profile("!test")
+@Profile("!test & !local")
 @Slf4j
 public class HtmlEmailService implements EmailService {
 

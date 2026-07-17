@@ -64,6 +64,9 @@ export default function ManagePage() {
               교사 관리
             </Link>
           )}
+          <Link to="/account" style={styles.link}>
+            계정 설정
+          </Link>
           <button onClick={onLogout} style={styles.ghostBtn}>
             로그아웃
           </button>

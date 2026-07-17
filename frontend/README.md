@@ -9,7 +9,7 @@
 ## 1. 이게 어떻게 돌아가나요? (큰 그림)
 
 예전에는 백엔드(Spring)가 HTML(Thymeleaf)까지 다 만들어서 브라우저에 내려줬습니다.
-이제는 역할을 나눕니다.
+지금은 **Thymeleaf를 완전히 걷어내고 순수 REST API + React**로 역할을 나눴습니다.
 
 ```
 [브라우저: React 앱]  ──(JSON 요청/응답)──▶  [Spring Boot: REST API]  ──▶  [DB]
@@ -64,7 +64,8 @@ frontend/
    │  ├─ class.js      ← 학생 수강신청 API 함수들
    │  ├─ board.js      ← 공지/댓글 API 함수들
    │  ├─ admin.js      ← 교사 승인/변경/삭제 API 함수들
-   │  └─ notification.js ← 알림 조회/읽음 API 함수들
+   │  ├─ notification.js ← 알림 조회/읽음 API 함수들
+   │  └─ account.js    ← 회원가입/아이디·비번찾기/계정설정 API 함수들
    ├─ auth/
    │  └─ AuthContext.jsx ← 로그인 상태를 앱 전체에서 공유 (누가 로그인했나)
    ├─ components/      ← 여러 페이지에서 재사용하는 조각
@@ -73,6 +74,10 @@ frontend/
    └─ pages/           ← 화면(페이지) 단위 컴포넌트
       ├─ EnrollPage.jsx      ← 학생 수강신청 (공개, 랜딩 페이지 "/")
       ├─ LoginPage.jsx       ← 로그인 "/login"
+      ├─ SignupPage.jsx      ← 교사 회원가입 "/signup"
+      ├─ FindIdPage.jsx      ← 아이디 찾기 "/find-id"
+      ├─ FindPasswordPage.jsx ← 비밀번호 찾기(인증번호) "/find-password"
+      ├─ AccountPage.jsx     ← 계정 설정(이메일/비번 변경) "/account"
       ├─ BoardListPage.jsx   ← 공지 목록 "/board"
       ├─ BoardDetailPage.jsx ← 공지 상세 + 댓글 "/board/:id"
       ├─ BoardFormPage.jsx   ← 공지 작성/수정 "/board/new", "/board/:id/edit" (관리자)
@@ -206,6 +211,10 @@ proxy: { '/api': { target: 'http://localhost:3205' } }
 |---|---|---|---|
 | `EnrollPage.jsx` | `/` | 학생이 이름으로 조회 후 요일별 수업 신청 | 공개 |
 | `LoginPage.jsx` | `/login` | 아이디/비번으로 로그인 | 공개 |
+| `SignupPage.jsx` | `/signup` | 교사 회원가입(승인 대기) | 공개 |
+| `FindIdPage.jsx` | `/find-id` | 이메일로 아이디 찾기 | 공개 |
+| `FindPasswordPage.jsx` | `/find-password` | 인증번호로 비밀번호 재설정 | 공개 |
+| `AccountPage.jsx` | `/account` | 본인 이메일/비밀번호 변경 | 로그인 |
 | `BoardListPage.jsx` | `/board` | 공지사항 목록/검색 | 공개 |
 | `BoardDetailPage.jsx` | `/board/:id` | 공지 상세 + 댓글(학생 인증) | 공개 |
 | `BoardFormPage.jsx` | `/board/new`, `/board/:id/edit` | 공지 작성/수정 | 관리자 |

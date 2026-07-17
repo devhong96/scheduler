@@ -9,6 +9,10 @@ import BoardListPage from './pages/BoardListPage'
 import BoardDetailPage from './pages/BoardDetailPage'
 import BoardFormPage from './pages/BoardFormPage'
 import AdminTeachersPage from './pages/AdminTeachersPage'
+import SignupPage from './pages/SignupPage'
+import FindIdPage from './pages/FindIdPage'
+import FindPasswordPage from './pages/FindPasswordPage'
+import AccountPage from './pages/AccountPage'
 
 export default function App() {
   return (
@@ -18,6 +22,9 @@ export default function App() {
           {/* 공개: 학생 수강신청 (랜딩) */}
           <Route path="/" element={<EnrollPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/find-id" element={<FindIdPage />} />
+          <Route path="/find-password" element={<FindPasswordPage />} />
 
           {/* 공개: 공지사항 목록/상세 */}
           <Route path="/board" element={<BoardListPage />} />
@@ -60,6 +67,14 @@ export default function App() {
             element={
               <ProtectedRoute roles={['ROLE_ADMIN']}>
                 <AdminTeachersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <AccountPage />
               </ProtectedRoute>
             }
           />

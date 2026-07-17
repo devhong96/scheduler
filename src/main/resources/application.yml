@@ -30,10 +30,6 @@ spring:
       hibernate.highlight_sql: true
       defer-datasource-initialization: true
 
-  thymeleaf:
-    cache: true #운영시 true
-    enabled: true
-
   servlet: #fileupload
     multipart:
       max-file-size: 20MB
