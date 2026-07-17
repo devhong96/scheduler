@@ -24,10 +24,6 @@ spring:
         format_sql: true
         show_sql: false
 
-  thymeleaf:
-    cache: false
-    enabled: true
-
   mail: #email - dummy host; tests must not hit a real SMTP server
     host: localhost
     port: 3025
