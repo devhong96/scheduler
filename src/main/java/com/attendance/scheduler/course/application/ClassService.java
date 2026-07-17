@@ -91,18 +91,18 @@ public class ClassService {
             if (classDTOList.studentName().equals(classRequest.studentName())) {
                 continue;
             }
-            Integer mondayValue = classDTOList.monday();
-            Integer tuesdayValue = classDTOList.tuesday();
-            Integer wednesdayValue = classDTOList.wednesday();
-            Integer thursdayValue = classDTOList.thursday();
-            Integer fridayValue = classDTOList.friday();
-
-            if (mondayValue.equals(classRequest.monday())) throw new IllegalStateException("월요일 수업 중에 겹치는 날이 있습니다.");
-            if (tuesdayValue.equals(classRequest.tuesday())) throw new IllegalStateException("화요일 수업 중에 겹치는 날이 있습니다.");
-            if (wednesdayValue.equals(classRequest.wednesday())) throw new IllegalStateException("수요일 수업 중에 겹치는 날이 있습니다.");
-            if (thursdayValue.equals(classRequest.thursday())) throw new IllegalStateException("목요일 수업 중에 겹치는 날이 있습니다.");
-            if (fridayValue.equals(classRequest.friday())) throw new IllegalStateException("금요일 수업 중에 겹치는 날이 있습니다.");
+            // 0(등원 안 함)은 실제 수업이 아니므로 겹침 검사에서 제외한다.
+            if (collides(classDTOList.monday(), classRequest.monday())) throw new IllegalStateException("월요일 수업 중에 겹치는 날이 있습니다.");
+            if (collides(classDTOList.tuesday(), classRequest.tuesday())) throw new IllegalStateException("화요일 수업 중에 겹치는 날이 있습니다.");
+            if (collides(classDTOList.wednesday(), classRequest.wednesday())) throw new IllegalStateException("수요일 수업 중에 겹치는 날이 있습니다.");
+            if (collides(classDTOList.thursday(), classRequest.thursday())) throw new IllegalStateException("목요일 수업 중에 겹치는 날이 있습니다.");
+            if (collides(classDTOList.friday(), classRequest.friday())) throw new IllegalStateException("금요일 수업 중에 겹치는 날이 있습니다.");
         }
+    }
+
+    // 같은 교시를 신청했는지 판단. 0(등원 안 함)/null 은 수업이 아니므로 충돌로 보지 않는다.
+    private boolean collides(Integer existing, Integer requested) {
+        return existing != null && existing != 0 && existing.equals(requested);
     }
 
     @Transactional

@@ -4,12 +4,15 @@ import ProtectedRoute from './components/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import ManagePage from './pages/ManagePage'
 import StudentListPage from './pages/StudentListPage'
+import EnrollPage from './pages/EnrollPage'
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* 공개: 학생 수강신청 (랜딩) */}
+          <Route path="/" element={<EnrollPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/manage"
@@ -27,7 +30,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/manage" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
